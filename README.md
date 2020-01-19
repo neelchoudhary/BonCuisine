@@ -99,4 +99,6 @@ TODO add cloud hosting here.
 We will use [GitFlow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
 ).
 ![Git Flow Diagram](images/gitflowdiagram.png?raw=true "Title")
+When making a new feature branch, follow the name convention: feature-[your intitials]-[name of feature]
+Example: feature-nc-updated-ui
 
