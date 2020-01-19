@@ -1,0 +1,5 @@
+recipe_id, recipe_name, r_time, num_servings, difficulty, image_id, cuisine_id
+1,Hamburger,30,3,medium,1,1
+2,Canele,60,4,hard,2,2
+3,Sushi,20,7,easy,3,3
+4,Tamale,20,2,easy,4,4
