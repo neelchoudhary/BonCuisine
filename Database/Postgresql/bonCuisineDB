@@ -77,12 +77,11 @@ CREATE TABLE recipe_ingredients (
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-
 CREATE PROCEDURE getAllRecipes()
 LANGUAGE plpgsql
 AS $getAllRecipes$
 BEGIN
-    SELECT recipe_id, recipe_name, r_time, num_servings, difficulty, c.cuisine_name, i.image_data FROM recipes r INNER JOIN image_store i ON r.image_id = i.image_id
+    SELECT recipe_name, r_time, num_servings, difficulty, c.cuisine_name, i.image_data FROM recipes r INNER JOIN image_store i ON r.image_id = i.image_id
     INNER JOIN cuisines c ON r.cuisine_id = c.cuisine_id;
 END;
 $getAllRecipes$;
@@ -92,7 +91,7 @@ CREATE PROCEDURE getAllCuisine()
 LANGUAGE plpgsql
 AS $getAllCuisine$
 BEGIN
-    SELECT cuisine_id, cuisine_name FROM cuisines;
+    SELECT cuisine_name FROM cuisines;
 END;
 $getAllCuisine$;
 
@@ -101,7 +100,8 @@ CREATE PROCEDURE getRecipeIngredients(recipe_idi INTEGER)
 LANGUAGE plpgsql
 AS $getRecipeIngredients$
 BEGIN
-    SELECT ing.ingredient_id, ing.ingredient_name, ri.amount, i.image_data FROM ingredients ing INNER JOIN recipe_ingredients ri ON ing.ingredient_id = ri.ingredient_id
+    SELECT ing.ingredient_name, ri.amount, i.image_data FROM ingredients ing INNER JOIN recipe_ingredients ri ON ing.ingredient_id = ri.ingredient_id
+    AND ri.recipe_id = recipe_idi
     INNER JOIN image_store i ON ing.image_id = i.image_id;
 END;
 $getRecipeIngredients$;
@@ -111,7 +111,7 @@ CREATE PROCEDURE getUserRecipes(user_idi INTEGER)
 LANGUAGE plpgsql
 AS $getUserRecipes$
 BEGIN
-    SELECT r.recipe_id, r.recipe_name FROM saved_recipes s
+    SELECT recipe_name FROM saved_recipes s
     INNER JOIN recipes r ON r.recipe_id = s.recipe_id
     AND s.recipe_id = user_idi;
 END;
@@ -135,42 +135,3 @@ BEGIN
     VALUES (user_idi, recipe_idi);
 END;
 $addUserRecipes$;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
