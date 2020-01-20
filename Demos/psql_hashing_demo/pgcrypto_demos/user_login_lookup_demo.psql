@@ -1,0 +1,41 @@
+/* Demo for looking up passwords for user login */
+
+/* When a user comes to login, they will provide their username and password. We will find them
+   by their username, and check their password by hashing it. */
+
+/* We will then look to see if this salt is already an entry in our USERS table */
+
+\qecho '\n'
+\qecho TESTING: Correct password.'\n'
+\qecho User Jovan Jean has logged in, providing email and password.
+\qecho Looking up email...jovan@bondetous.com
+\qecho Checking whether hash matches for password...
+
+SELECT * FROM users WHERE email = lower('jovan@bondetous.com')
+     AND password = crypt('brtbrt', password);
+
+/* Also, notice that we are using the password as the salt here */
+
+\qecho Passwords match! Authentication granted.'\n'
+
+/* Now, let's make sure that if the user provides the wrong password, no entries are 
+   matched in the USER table */
+
+\qecho TESTING: Wrong password.'\n'
+\qecho User Jovan Jean has logged in, providing email and password.
+\qecho Looking up email...jovan@bondetous.com
+\qecho Checking whether hash matches for password...
+
+SELECT * FROM users WHERE email = lower('jovan@bondetous.com')
+    AND password = crypt('babusekar', password);
+
+\qecho Hash does not match! Incorrect password!'\n'
+
+\qecho Notice how no rows get matched in this example, since the wrong password was provided.'\n'
+
+/* We can even try with the right password, but with the wrong salt */
+\qecho TESTING: Correct password, wrong salt.'\n'
+SELECT * FROM users WHERE email = lower('jovan@bondetous.com')
+    AND password = crypt('brtbrt', gen_salt('bf', 8));
+
+\qecho Once again, now rows come up in this case.'\n'
