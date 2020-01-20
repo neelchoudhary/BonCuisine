@@ -1,0 +1,20 @@
+/* Demo to hash and salt passwords uing pgcrypt */
+
+CREATE EXTENSION pgcrypto;
+
+\qecho 1. Hashing "abc123" with random salt
+
+/* 1. Hash abc123 with random salt */
+select crypt('abc123', gen_salt('bf', 8));
+
+\qecho 2. Hashing "abc123" again with radnom salt
+
+/* 2. Hash abc123 again with random salt */
+select crypt('abc123', gen_salt('bf', 8));
+
+\qecho 3. Hashing abc123 again but give it the password from (2) as salt
+select crypt('abc123', '$2a$08$B65/bg3B0iIW0uAchw8lwu2sJhbP1nT7iwKMqkmlrYgfryM6ptNa.');
+
+\qecho 4. Hashing abc124 but give it the password from (2) as salt 
+select crypt('abc124', '$2a$08$B65/bg3B0iIW0uAchw8lwu2sJhbP1nT7iwKMqkmlrYgfryM6ptNa.');
+

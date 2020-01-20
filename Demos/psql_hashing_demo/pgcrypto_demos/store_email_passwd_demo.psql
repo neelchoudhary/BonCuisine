@@ -1,0 +1,25 @@
+/* Demo to store emails and hashed passwords */ 
+
+/* So we only have one entry each time */
+DROP TABLE users;
+
+/* Only create users table once */
+CREATE TABLE IF NOT EXISTS users (
+    id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+    email text NOT NULL,
+    password text NOT NULL
+);
+
+/* gen_random_uuid: using uuids for user ids instead of auto incrementing a number. This makes them harder to guess */
+
+/* When users register with email and password, INSERT them, using our crypt function from hasl_salt_demo */
+INSERT INTO users (email, password) VALUES
+    ('jovan@bondetous.com', crypt('brtbrt', gen_salt('bf', 8)));
+
+/* Display the user table to see what we have */
+\qecho Displaying USERS table: 
+
+SELECT * FROM users;
+
+\qecho Looks like we have a random ID, email, and hashed password! Brt Brt!
+
