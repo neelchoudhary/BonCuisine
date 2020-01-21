@@ -1,15 +1,12 @@
 package repositories
 
 import (
-
-	"boncuisine-mobile-app/Server2/models"
 	"database/sql"
 
+	"github.com/neelchoudhary/boncuisine/models"
 )
 
 type RecipeRepository struct{}
-
-
 
 func (r RecipeRepository) GetAllRecipies(db *sql.DB, recipe models.Recipe, recipes []models.Recipe) []models.Recipe {
 	rows, err := db.Query("SELECT recipe_id, recipe_name, r_time, num_servings, difficulty, c.cuisine_name, i.image_data FROM recipes r INNER JOIN image_store i ON r.image_id = i.image_id INNER JOIN cuisines c ON r.cuisine_id = c.cuisine_id;")

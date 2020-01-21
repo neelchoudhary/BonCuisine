@@ -3,11 +3,12 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
-	"boncuisine-mobile-app/Server2/models"
-	"boncuisine-mobile-app/Server2/repositories"
-	"boncuisine-mobile-app/Server2/utils"
 	"log"
 	"net/http"
+
+	"github.com/neelchoudhary/boncuisine/models"
+	"github.com/neelchoudhary/boncuisine/repositories"
+	"github.com/neelchoudhary/boncuisine/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -79,7 +80,7 @@ func (c Controller) Signup(db *sql.DB) http.HandlerFunc {
 
 		json.NewDecoder(r.Body).Decode(&user)
 
-		if user.FullName == ""  || user.UserName == "" || user.Email == "" || user.Password == "" {
+		if user.FullName == "" || user.UserName == "" || user.Email == "" || user.Password == "" {
 			error.Message = "All fields required"
 			utils.RespondWithError(w, http.StatusBadRequest, error)
 			return

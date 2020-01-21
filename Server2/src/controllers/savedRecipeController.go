@@ -1,19 +1,18 @@
 package controllers
 
 import (
-	"boncuisine-mobile-app/Server2/models"
-	"boncuisine-mobile-app/Server2/repositories"
 	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
 
+	"github.com/neelchoudhary/boncuisine/models"
+	"github.com/neelchoudhary/boncuisine/repositories"
+
 	"github.com/gorilla/mux"
 )
 
 var userRecipes []models.SavedRecipe
-
-
 
 func (c Controller) GetUserRecipes(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -71,4 +70,3 @@ func (c Controller) RemoveUserRecipes(db *sql.DB) http.HandlerFunc {
 		json.NewEncoder(w).Encode(rowsDeleted)
 	}
 }
-
