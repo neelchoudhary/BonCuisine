@@ -1,13 +1,14 @@
 package controllers
 
 import (
-	"boncuisine-mobile-app/Server2/models"
-	"boncuisine-mobile-app/Server2/repositories"
 	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 
+	"github.com/neelchoudhary/boncuisine/repositories"
+
+	"github.com/neelchoudhary/boncuisine/models"
 )
 
 var cuisines []models.Cuisine
@@ -31,4 +32,3 @@ func (c Controller) GetAllCuisines(db *sql.DB) http.HandlerFunc {
 		json.NewEncoder(w).Encode(cuisines)
 	}
 }
-

@@ -1,27 +1,27 @@
 package main
 
 import (
-	"boncuisine-mobile-app/Server2/driver"
-	"boncuisine-mobile-app/Server2/controllers"
-	"boncuisine-mobile-app/Server2/utils"
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
-	"fmt"
+
+	"github.com/neelchoudhary/boncuisine/utils"
+
+	"github.com/neelchoudhary/boncuisine/driver"
+
+	"github.com/neelchoudhary/boncuisine/controllers"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-
 	// "strconv"
 )
 
 var db *sql.DB
 
-
 func homeLink(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome home!")
 }
-
 
 func main() {
 	db = driver.ConnectDB()
@@ -42,6 +42,6 @@ func main() {
 	router.HandleFunc("/protectedEndpoint", utils.TokenVerifyMiddleWare(controller.Protected(db))).Methods("GET")
 	router.HandleFunc("/signup", controller.Signup(db)).Methods("POST")
 	router.HandleFunc("/login", controller.Login(db)).Methods("POST")
-	
+
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

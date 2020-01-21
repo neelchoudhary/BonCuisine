@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"boncuisine-mobile-app/Server2/models"
-	"boncuisine-mobile-app/Server2/repositories"
 	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
+
+	"github.com/neelchoudhary/boncuisine/models"
+	"github.com/neelchoudhary/boncuisine/repositories"
 
 	"github.com/gorilla/mux"
 )
@@ -42,4 +43,3 @@ func (c Controller) GetRecipeIngredients(db *sql.DB) http.HandlerFunc {
 		json.NewEncoder(w).Encode(recipeIngredients)
 	}
 }
-

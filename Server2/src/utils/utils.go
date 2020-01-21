@@ -3,11 +3,12 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"boncuisine-mobile-app/Server2/models"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/neelchoudhary/boncuisine/models"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )

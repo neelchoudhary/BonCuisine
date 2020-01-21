@@ -1,8 +1,7 @@
 package repositories
 
 import (
-
-	"boncuisine-mobile-app/Server2/models"
+	"github.com/neelchoudhary/boncuisine/models"
 
 	"database/sql"
 
