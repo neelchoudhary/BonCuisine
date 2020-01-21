@@ -15,13 +15,13 @@ These demos require the interactive `postgresql` environment, `psql`. Follow the
  
 # Running the Demos
 1. Make sure you have the `pgcrypto_demos` repository downloaded on your machine.
-2. Move into your interactice `psql` environment by doing: `sudo -u postgres -i`
-3. Do a recurisve copy to move the `pgcrypto_demos` from your local machien into your local `psql` environment. For example:
+2. Move into your interactive `psql` environment by doing: `sudo -u postgres -i`
+3. Do a recurisve copy to move the `pgcrypto_demos` from your local machine into your local `psql` environment. For example:
         ```
         $ cp -r /home/rahultoppur/pgcrypto_demos/ .
         ```
         This moves the `pgcrypto_demos` directory into your local directory, `.`
-4. From here, you can manually open up each file walk through them for yourself. Read the comments to have a better idea of what's going on, or run each demo individually to observe the output. To open each demo in an editor, `cd` into the `pgcrypto_demos` directory and use `vim` or an editor of your choosing. Use `Control-D` to exit the `psql` environment.
+4. From here, you can manually open up each file walk through it for yourself. Read the comments to have a better idea of what's going on, or run each demo individually to observe the output. To open each demo in an editor, `cd` into the `pgcrypto_demos` directory and use `vim` or an editor of your choosing. Use `Control-D` to exit the `psql` environment.
 
     Run each demo by doing: `psql -f <filename>.psql`, e.g. `psql -f hash_salt_demo.psql`. 
 5. The demos are broken up into three parts:
