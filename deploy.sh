@@ -4,7 +4,7 @@
 apk add --update python python-dev py-pip
 pip install awscli --upgrade
 
-docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+docker pull $CI_REGISTRY_IMAGE:production
 
 # Set AWS config variables used during the AWS get-login command below
 
