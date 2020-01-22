@@ -23,15 +23,3 @@ script:
     - echo "staging"
 only:
     - develop
-
-Production:
-stage: deploy
-services: 
-    - docker:dind
-environment:
-    name: production
-script: 
-    - ./build.sh
-when: manual
-only: 
-    - master
