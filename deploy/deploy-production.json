@@ -1,6 +1,6 @@
 {
     "volumes": [],
-    "family": "boncuisine-production-definition",
+    "family": "boncuisine-production-server-definition",
     "executionRoleArn": "arn:aws:iam::729017073046:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
     "taskRoleArn": "arn:aws:iam::729017073046:role/ecsTaskExecutionRole",
@@ -9,7 +9,7 @@
         "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-            "awslogs-group": "/ecs/boncuisine-production-definition",
+            "awslogs-group": "/ecs/boncuisine-production-server-definition",
             "awslogs-region": "us-east-2",
             "awslogs-stream-prefix": "ecs"
             }
@@ -24,8 +24,8 @@
         "command": [],
         "cpu": 0,
         "volumesFrom": [],
-        "image": "729017073046.dkr.ecr.us-east-2.amazonaws.com/go-lang-server:production",
+        "image": "729017073046.dkr.ecr.us-east-2.amazonaws.com/boncuisine-server-image-repo:production",
         "links": [],
-        "name": "boncuisine-container-production"
+        "name": "boncuisine-production-server-container"
     }]
 }
