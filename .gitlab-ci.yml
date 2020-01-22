@@ -1,0 +1,37 @@
+image: docker:latest
+
+services:
+- docker:dind
+
+stages:
+- build
+- deploy
+
+
+Build:
+stage: build
+script: 
+    - echo "building"
+
+Staging:
+stage: deploy
+services: 
+    - docker:dind
+environment:
+    name: staging
+script: 
+    - echo "staging"
+only:
+    - develop
+
+Production:
+stage: deploy
+services: 
+    - docker:dind
+environment:
+    name: production
+script: 
+    - ./build.sh
+when: manual
+only: 
+    - master
