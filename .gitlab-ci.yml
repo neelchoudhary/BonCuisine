@@ -37,7 +37,7 @@ docker-production:
     - $(aws ecr get-login --no-include-email --region $AWS_REGION)
     - docker tag $CI_REGISTRY_IMAGE:production $AWS_REGISTRY_IMAGE:production
     - docker push $AWS_REGISTRY_IMAGE:production
-    - aws ecs register-task-definition --family boncuisine-production-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy-aws.json --region \$AWS_REGION
-    - aws ecs update-service --cluster golang-cluster --service golang-container-prod-service --task-definition boncuisine-production-definition --region \$AWS_REGION
+    - aws ecs register-task-definition --family boncuisine-production-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy-aws.json --region "us-east-2"
+    - aws ecs update-service --cluster golang-cluster --service golang-container-prod-service --task-definition boncuisine-production-definition --region "us-east-2"
   only:
     - develop
