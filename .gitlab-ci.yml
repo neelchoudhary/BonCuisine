@@ -1,5 +1,6 @@
 stages:
   - build
+  - develop
   - staging
   - production
 
@@ -17,6 +18,60 @@ docker-build:
   only:
     - master
     - develop
+  when:
+    - manual
+    
+docker-develop:
+  # Official docker image.
+  image: docker:latest
+  stage: develop
+  services:
+    - docker:dind
+  environment:
+    name: production
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - apk add --update python python-dev py-pip
+    - pip install awscli --upgrade
+    - docker pull $CI_REGISTRY_IMAGE:production
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    - $(aws ecr get-login --no-include-email --region $AWS_REGION)
+    - docker tag $CI_REGISTRY_IMAGE:production $AWS_REGISTRY_IMAGE:production
+    - docker push $AWS_REGISTRY_IMAGE:production
+    - aws ecs register-task-definition --family boncuisine-production-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy-aws.json --region "us-east-2"
+    - aws ecs update-service --cluster golang-cluster --service golang-container-prod-service --task-definition boncuisine-production-definition --region "us-east-2"
+  only:
+    - develop
+  when:
+    - manual
+
+docker-staging:
+  # Official docker image.
+  image: docker:latest
+  stage: staging
+  services:
+    - docker:dind
+  environment:
+    name: production
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - apk add --update python python-dev py-pip
+    - pip install awscli --upgrade
+    - docker pull $CI_REGISTRY_IMAGE:production
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    - $(aws ecr get-login --no-include-email --region $AWS_REGION)
+    - docker tag $CI_REGISTRY_IMAGE:production $AWS_REGISTRY_IMAGE:production
+    - docker push $AWS_REGISTRY_IMAGE:production
+    - aws ecs register-task-definition --family boncuisine-production-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy-aws.json --region "us-east-2"
+    - aws ecs update-service --cluster golang-cluster --service golang-container-prod-service --task-definition boncuisine-production-definition --region "us-east-2"
+  only:
+    - staging
+  when:
+    - manual
 
 docker-production:
   # Official docker image.
@@ -40,4 +95,6 @@ docker-production:
     - aws ecs register-task-definition --family boncuisine-production-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy-aws.json --region "us-east-2"
     - aws ecs update-service --cluster golang-cluster --service golang-container-prod-service --task-definition boncuisine-production-definition --region "us-east-2"
   only:
-    - develop
+    - master
+  when:
+    - manual
