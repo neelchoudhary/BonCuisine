@@ -1,5 +1,4 @@
 *For work breakdown, see Notion.*
-pipeline test
 
 # BonCuisine <a name="title"></a>
 A dynamic recipe application that gives users a variety of highly original and tasty recipes to choose from. Users can bookmark recipes they find interesting and will receive push notifications when new recipes are added.  
