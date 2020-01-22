@@ -25,10 +25,10 @@ docker-production:
   services:
     - docker:dind
   environment:
-    name: staging
+    name: production
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - ./deploy.sh
+    - chmod +x ./deploy.sh
   only:
     - develop
