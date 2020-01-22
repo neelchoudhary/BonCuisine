@@ -14,8 +14,8 @@ export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 # AWS login
 $(aws ecr get-login --no-include-email --region $AWS_REGION)
 
-docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME $AWS_REGISTRY_IMAGE:$CI_ENVIRONMENT_SLUG
-docker push $AWS_REGISTRY_IMAGE:$CI_ENVIRONMENT_SLUG
+docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME $AWS_REGISTRY_IMAGE:production
+docker push $AWS_REGISTRY_IMAGE:production
 
 # Tag new docker image on go-lang-server ECR as latest
 # docker tag go-lang-server:latest 729017073046.dkr.ecr.us-east-2.amazonaws.com/go-lang-server:latest
@@ -23,11 +23,11 @@ docker push $AWS_REGISTRY_IMAGE:$CI_ENVIRONMENT_SLUG
 # Push new docker image to ECR
 # docker push 729017073046.dkr.ecr.us-east-2.amazonaws.com/go-lang-server:latest
 
-aws ecs register-task-definition --family boncuisine-$CI_ENVIRONMENT_SLUG-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy-aws.json --region \$AWS_REGION
+aws ecs register-task-definition --family boncuisine-production-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy-aws.json --region \$AWS_REGION
 
 # Tell our service to use the latest version of task definition.
 
-aws ecs update-service --cluster golang-cluster --service golang-container-prod-service --task-definition boncuisine-$CI_ENVIRONMENT_SLUG-definition --region \$AWS_REGION
+aws ecs update-service --cluster golang-cluster --service golang-container-prod-service --task-definition boncuisine-production-definition --region \$AWS_REGION
 
 # Register New Task Definition
 # aws ecs register-task-definition --family boncuisine-production-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://boncuisine-task-definition-production.json --region "us-east-2"
