@@ -17,8 +17,6 @@ docker-build:
   only:
     - master
     - develop
-  when:
-    manual
 
 docker-production:
   # Official docker image.
@@ -31,8 +29,6 @@ docker-production:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - deploy.sh
+    - ./deploy.sh
   only:
     - develop
-  when:
-    manual
