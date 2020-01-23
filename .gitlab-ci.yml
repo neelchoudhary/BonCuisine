@@ -16,7 +16,7 @@ docker-build-develop:
     - docker build --build-arg APP_ENV=develop --pull -t "$CI_REGISTRY_IMAGE:develop" Server/src/.
     - docker push "$CI_REGISTRY_IMAGE:develop"
   only:
-    - develop
+    - developk
   when: manual
   
 docker-build-staging:
@@ -48,7 +48,7 @@ docker-build-production:
     - docker push "$CI_REGISTRY_IMAGE:production"
   only:
     - production
-    - develop
+    - developk
   when: manual
     
 docker-develop:
