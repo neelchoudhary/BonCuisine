@@ -3,7 +3,7 @@ ENV := local
 CONFIG_FILE ?= ./config/$(ENV).yml
 DB_URL ?= $(shell sed -n 's/^dburl:[[:space:]]*"\(.*\)"/\1/p' $(CONFIG_FILE))
 MIGRATE := migrate -path=db/migrations -database "$(DB_URL)"
-LDFLAGS := -ldflags "-X github.com/neelchoudhary/boncuisine/driver.ENV=$(ENV)"
+LDFLAGS := -ldflags "-X github.com/neelchoudhary/boncuisine/api/driver.ENV=$(ENV)"
 
 .PHONY: default
 default: help
@@ -24,7 +24,7 @@ stop-db: ## stop the database
 run-server: ## run a local containerized instance of the api
 	./entrypoint.sh
 
-.PHONY: run-docker-server
+.PHONY: build-docker-server
 build-docker-server: ## use for testing if builds work
 	docker build --build-arg APP_ENV=local -t boncuisine-server .
 
