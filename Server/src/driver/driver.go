@@ -10,6 +10,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 /// AWS login
@@ -30,8 +34,19 @@ import (
 /// Update service with new task and start task. This should end old task
 // aws ecs update-service --cluster golang-cluster --service golang-container-prod-service --task-definition boncuisine-production-definition --region "us-east-2"
 
-func getRDSCredentials() DBConnection {
-	secretName := "BoncuisineRDSCredentials"
+func getDBCredentials(env string) DBConnection {
+	var secretName string
+	if (env == "local") {
+		return getLocalCredentials()
+	} else if (env == "develop") {
+		secretName = "RDSDevelopCredentials"
+	} else if (env == "staging") {
+		secretName = "RDSStagingCredentials"
+	} else if (env == "production") {
+		secretName = "RDSProductionCredentials"
+	} else {
+		return getLocalCredentials()
+	}
 	region := "us-east-2"
 
 	//Create a Secrets Manager client
@@ -84,6 +99,17 @@ func getRDSCredentials() DBConnection {
 	return dBConnection
 }
 
+func getLocalCredentials() DBConnection {
+	var dbConnection DBConnection
+	dbConnection.Host = "localhost"
+	dbConnection.Port = 5432
+	dbConnection.User = "postgres"
+	dbConnection.Password = "password"
+	dbConnection.DbName = "postgres"
+
+	return dbConnection
+}
+
 var db *sql.DB
 
 func logFatal(err error) {
@@ -93,12 +119,16 @@ func logFatal(err error) {
 }
 
 // Connect to postgresql db
-func ConnectDB() *sql.DB {
+func ConnectDB(env string) *sql.DB {
 	fmt.Println("Connecting... ")
-	dbConnection := getRDSCredentials()
+	dbConnection := getDBCredentials(env)
+	fmt.Println("Retreived Credentials")
+	fmt.Println(dbConnection.Host)
+	fmt.Println(dbConnection.User)
+	fmt.Println(dbConnection.DbName)
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		dbConnection.Host, dbConnection.Port, dbConnection.User, dbConnection.Password, dbName)
+		dbConnection.Host, dbConnection.Port, dbConnection.User, dbConnection.Password, dbConnection.DbName)
 
 	db, err = sql.Open("postgres", psqlInfo)
 	logFatal(err)
@@ -108,7 +138,29 @@ func ConnectDB() *sql.DB {
 
 	fmt.Println("You connected to your database.")
 
+	MigrateUp(dbConnection)
+
 	return db
+}
+
+// Used for development and continuous integration
+// migrate create -ext sql -dir db/migrations -seq create_users_table
+// migrate -database postgres://postgres:password@localhost:5432/postgres?sslmode=disable -path db/migrations up
+// migrate -database postgres://postgres:password@localhost:5432/postgres?sslmode=disable -path db/migrations down
+func MigrateUp(dbConnection DBConnection) {
+	fmt.Println("Migrating Up...")
+	sourceUrl := "file://./db/migrations"
+	// postgres://user:password@host:port/dbname?query
+	localDbUrl := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable", 
+	dbConnection.User, dbConnection.Password, dbConnection.Host, dbConnection.DbName)
+	m, err := migrate.New(sourceUrl, localDbUrl)
+	if err != nil {
+		logFatal(err)
+	}
+	if err := m.Up(); err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println("Finished Migrations. Up to Date.")
 }
 
 // DBConnection ...
@@ -117,7 +169,5 @@ type DBConnection struct {
 	Port     int64  `json:"port"`
 	User     string `json:"username"`
 	Password string `json:"password"`
-	DbName   string `json:"dbInstanceIdentifier"`
+	DbName   string `json:"dbname"`
 }
-
-const dbName = "boncuisinepgsql"

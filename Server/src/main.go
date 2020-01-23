@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"flag"
 
 	"github.com/neelchoudhary/boncuisine/utils"
 
@@ -14,7 +15,6 @@ import (
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	// "strconv"
 )
 
 var db *sql.DB
@@ -24,7 +24,9 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	db = driver.ConnectDB()
+	var env = flag.String("env", "local", "environment type, local, develop, staging, production")
+	flag.Parse()
+	db = driver.ConnectDB(*env)
 
 	router := mux.NewRouter().StrictSlash(true)
 

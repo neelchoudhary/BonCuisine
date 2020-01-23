@@ -21,5 +21,8 @@ RUN go build -o main .
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
+ARG APP_ENV=local
+ENV APP_ENV ${APP_ENV}
+
 # Command to run the executable
-CMD ["./main"]
+CMD ["./entrypoint.sh"]
