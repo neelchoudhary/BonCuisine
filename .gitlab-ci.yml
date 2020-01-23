@@ -1,9 +1,10 @@
 stages:
   - build
+  - develop
   - staging
   - production
 
-docker-build:
+docker-build-develop:
   # Official docker image.
   image: docker:latest
   stage: build
@@ -12,11 +13,92 @@ docker-build:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE:production" Server/src/.
+    - docker build --build-arg APP_ENV=develop --pull -t "$CI_REGISTRY_IMAGE:develop" Server/src/.
+    - docker push "$CI_REGISTRY_IMAGE:develop"
+  only:
+    - develop
+  when: manual
+  
+docker-build-staging:
+  # Official docker image.
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --build-arg APP_ENV=staging --pull -t "$CI_REGISTRY_IMAGE:staging" Server/src/.
+    - docker push "$CI_REGISTRY_IMAGE:staging"
+  only:
+    - staging
+  when: manual
+  
+docker-build-production:
+  # Official docker image.
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --build-arg APP_ENV=production --pull -t "$CI_REGISTRY_IMAGE:production" Server/src/.
     - docker push "$CI_REGISTRY_IMAGE:production"
   only:
-    - master
+    - production
+  when: manual
+    
+docker-develop:
+  # Official docker image.
+  image: docker:latest
+  stage: develop
+  services:
+    - docker:dind
+  environment:
+    name: develop
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - apk add --update python python-dev py-pip
+    - pip install awscli --upgrade
+    - docker pull $CI_REGISTRY_IMAGE:develop
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    - $(aws ecr get-login --no-include-email --region us-east-2)
+    - docker tag $CI_REGISTRY_IMAGE:develop $AWS_REGISTRY_IMAGE:develop
+    - docker push $AWS_REGISTRY_IMAGE:develop
+    - aws ecs register-task-definition --family boncuisine-develop-server-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy/deploy-develop.json --region "us-east-2"
+    - aws ecs update-service --cluster boncuisine-develop-server-cluster --service boncuisine-develop-server-service --task-definition boncuisine-develop-server-definition --region "us-east-2"
+  only:
     - develop
+  when: manual
+
+docker-staging:
+  # Official docker image.
+  image: docker:latest
+  stage: staging
+  services:
+    - docker:dind
+  environment:
+    name: staging
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - apk add --update python python-dev py-pip
+    - pip install awscli --upgrade
+    - docker pull $CI_REGISTRY_IMAGE:staging
+    - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+    - $(aws ecr get-login --no-include-email --region us-east-2)
+    - docker tag $CI_REGISTRY_IMAGE:staging $AWS_REGISTRY_IMAGE:staging
+    - docker push $AWS_REGISTRY_IMAGE:staging
+    - aws ecs register-task-definition --family boncuisine-staging-server-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy/deploy-staging.json --region "us-east-2"
+    - aws ecs update-service --cluster boncuisine-staging-server-cluster --service boncuisine-staging-server-service --task-definition boncuisine-staging-server-definition --region "us-east-2"
+  only:
+    - staging
+  when: manual
+
 
 docker-production:
   # Official docker image.
@@ -34,10 +116,11 @@ docker-production:
     - docker pull $CI_REGISTRY_IMAGE:production
     - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
     - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-    - $(aws ecr get-login --no-include-email --region $AWS_REGION)
+    - $(aws ecr get-login --no-include-email --region us-east-2)
     - docker tag $CI_REGISTRY_IMAGE:production $AWS_REGISTRY_IMAGE:production
     - docker push $AWS_REGISTRY_IMAGE:production
-    - aws ecs register-task-definition --family boncuisine-production-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy-aws.json --region "us-east-2"
-    - aws ecs update-service --cluster golang-cluster --service golang-container-prod-service --task-definition boncuisine-production-definition --region "us-east-2"
+    - aws ecs register-task-definition --family boncuisine-production-server-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy/deploy-production.json --region "us-east-2"
+    - aws ecs update-service --cluster boncuisine-production-server-cluster --service boncuisine-production-server-service --task-definition boncuisine-production-server-definition --region "us-east-2"
   only:
-    - develop
+    - master
+  when: manual
