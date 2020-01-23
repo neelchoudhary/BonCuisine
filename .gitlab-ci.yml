@@ -125,5 +125,5 @@ docker-production:
     - aws ecs update-service --cluster boncuisine-production-server-cluster --service boncuisine-production-server-service --task-definition boncuisine-production-server-definition --region "us-east-2"
   only:
     - master
-    - developk
+    - develop
   when: manual
