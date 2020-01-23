@@ -32,7 +32,6 @@ docker-build-staging:
     - docker push "$CI_REGISTRY_IMAGE:staging"
   only:
     - staging
-    - develop
   when: manual
   
 docker-build-production:
@@ -48,7 +47,7 @@ docker-build-production:
     - docker push "$CI_REGISTRY_IMAGE:production"
   only:
     - production
-    - developk
+    - develop
   when: manual
     
 docker-develop:
@@ -73,7 +72,7 @@ docker-develop:
     - aws ecs register-task-definition --family boncuisine-develop-server-definition --requires-compatibilities FARGATE --cpu 256 --memory 512 --cli-input-json file://deploy/deploy-develop.json --region "us-east-2"
     - aws ecs update-service --cluster boncuisine-develop-server-cluster --service boncuisine-develop-server-service --task-definition boncuisine-develop-server-definition --region "us-east-2"
   only:
-    - develop
+    - developk
   when: manual
 
 docker-staging:
@@ -99,7 +98,7 @@ docker-staging:
     - aws ecs update-service --cluster boncuisine-staging-server-cluster --service boncuisine-staging-server-service --task-definition boncuisine-staging-server-definition --region "us-east-2"
   only:
     - staging
-    - develop
+    - developk
   when: manual
 
 
@@ -126,5 +125,5 @@ docker-production:
     - aws ecs update-service --cluster boncuisine-production-server-cluster --service boncuisine-production-server-service --task-definition boncuisine-production-server-definition --region "us-east-2"
   only:
     - master
-    - develop
+    - developk
   when: manual
