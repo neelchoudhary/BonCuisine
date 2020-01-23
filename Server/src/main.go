@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"flag"
 
-	"github.com/neelchoudhary/boncuisine/utils"
+	"github.com/neelchoudhary/boncuisine/api/utils"
 
-	"github.com/neelchoudhary/boncuisine/driver"
+	"github.com/neelchoudhary/boncuisine/api/driver"
 
-	"github.com/neelchoudhary/boncuisine/controllers"
+	"github.com/neelchoudhary/boncuisine/api/controllers"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
