@@ -1,7 +1,7 @@
 BEGIN;
 CREATE TABLE image_store (
     image_id SERIAL PRIMARY KEY,
-    image_data BYTEA NOT NULL
+    image_data BIGINT NOT NULL
 );
 
 CREATE TABLE cuisines (
