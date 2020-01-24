@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"io/ioutil"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -123,9 +124,6 @@ func ConnectDB(env string) *sql.DB {
 	fmt.Println("Connecting... ")
 	dbConnection := getDBCredentials(env)
 	fmt.Println("Retreived Credentials")
-	fmt.Println(dbConnection.Host)
-	fmt.Println(dbConnection.User)
-	fmt.Println(dbConnection.DbName)
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		dbConnection.Host, dbConnection.Port, dbConnection.User, dbConnection.Password, dbConnection.DbName)
@@ -139,8 +137,23 @@ func ConnectDB(env string) *sql.DB {
 	fmt.Println("You connected to your database.")
 
 	MigrateUp(dbConnection)
+	if (env == "local" || env == "develop") {
+		LoadSampleData(db)
+	}
 
 	return db
+}
+
+func LoadSampleData(db *sql.DB) {
+	fmt.Println("Loading Sample Data..")
+	query, err := ioutil.ReadFile("db/sample_data/sample_data.sql")
+	if err != nil {
+		panic(err)
+	}
+	if _, err := db.Exec(string(query)); err != nil {
+		panic(err)
+	}
+	fmt.Println("Loaded Sample Data")
 }
 
 // Used for development and continuous integration
