@@ -15,6 +15,9 @@ import (
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+
+	"github.com/swaggo/http-swagger"
+	_ "github.com/swaggo/http-swagger/example/gorilla/docs"
 )
 
 var db *sql.DB
@@ -44,6 +47,8 @@ func main() {
 	router.HandleFunc("/protectedEndpoint", utils.TokenVerifyMiddleWare(controller.Protected(db))).Methods("GET")
 	router.HandleFunc("/signup", controller.Signup(db)).Methods("POST")
 	router.HandleFunc("/login", controller.Login(db)).Methods("POST")
+
+	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
