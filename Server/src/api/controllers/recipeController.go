@@ -15,6 +15,14 @@ import (
 var recipes []models.Recipe
 var recipeIngredients []models.RecipeIngredient
 
+// GetAllRecipes godoc
+// @Summary Get all recipes
+// @Description Gets all existing recipes.
+// @Tags Recipes
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.Recipe
+// @Router /recipes/ [get]
 func (c Controller) GetAllRecipes(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var recipe models.Recipe
@@ -27,6 +35,15 @@ func (c Controller) GetAllRecipes(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// GetRecipeIngredients godoc
+// @Summary Get recipe ingredients
+// @Description Gets all ingredients for a given recipe by recipe ID.
+// @Tags Recipes
+// @Accept  json
+// @Produce  json
+// @Param recipe_id path int true "Recipe ID"
+// @Success 200 {array} models.RecipeIngredient
+// @Router /recipe/{recipe_id}/ingredients/ [get]
 func (c Controller) GetRecipeIngredients(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var recipeIngredient models.RecipeIngredient

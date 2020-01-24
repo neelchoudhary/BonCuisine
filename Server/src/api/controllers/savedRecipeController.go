@@ -14,6 +14,15 @@ import (
 
 var userRecipes []models.SavedRecipe
 
+// GetUserRecipes godoc
+// @Summary Get user saved recipes
+// @Description Gets all recipes saved by a given user by user ID.
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param user_id path int true "User ID"
+// @Success 200 {array} models.SavedRecipe
+// @Router /savedrecipes/{user_id}/ [get]
 func (c Controller) GetUserRecipes(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var userRecipe models.SavedRecipe
@@ -31,6 +40,16 @@ func (c Controller) GetUserRecipes(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// AddUserRecipes godoc
+// @Summary Add a saved recipe for a user
+// @Description Adds a new saved recipe for a user given a user ID and recipe ID
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param user_id path int true "User ID"
+// @Param recipe_id path int true "Recipe ID"
+// @Success 200 {object} models.SavedRecipe
+// @Router /savedrecipes/{user_id}/{recipe_id}/ [post]
 func (c Controller) AddUserRecipes(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -51,6 +70,16 @@ func (c Controller) AddUserRecipes(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// RemoveUserRecipes godoc
+// @Summary Removes a saved recipe for a user
+// @Description Removes an existing saved recipe for a user given a user ID and recipe ID
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param user_id path int true "User ID"
+// @Param recipe_id path int true "Recipe ID"
+// @Success 200 {object} models.SavedRecipe
+// @Router /savedrecipes/{user_id}/{recipe_id}/ [delete]
 func (c Controller) RemoveUserRecipes(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 

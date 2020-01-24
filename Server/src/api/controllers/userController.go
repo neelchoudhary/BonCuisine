@@ -13,6 +13,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Login godoc
+// @Summary User login
+// @Description Attempts to login the user given the valid credentials.
+// @Tags Authentication
+// @Accept  json
+// @Produce  json
+// @Param user body models.User true "Existing User"
+// @Router /login/ [post]
 func (c Controller) Login(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var user models.User
@@ -73,6 +81,14 @@ func (c Controller) Login(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+// Signup godoc
+// @Summary User signup
+// @Description Attempts to signup the user.
+// @Tags Authentication
+// @Accept  json
+// @Produce  json
+// @Param user body models.User true "New User"
+// @Router /signup/ [post]
 func (c Controller) Signup(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var user models.User
