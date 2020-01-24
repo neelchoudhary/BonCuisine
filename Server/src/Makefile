@@ -12,9 +12,10 @@ default: help
 help: ## help information about make commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: run-db
-run-db: ## run the API server with a dockerized psql server
+.PHONY: start-db
+start-db: ## start the API server with a dockerized psql server
 	docker run --rm   --name boncuisine-db -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres
+	docker cp db/sampledata/. boncuisine-db:/var/sampledata
 
 .PHONY: stop-db
 stop-db: ## stop the database
@@ -28,11 +29,10 @@ run-server: ## run a local containerized instance of the api
 build-docker-server: ## use for testing if builds work
 	docker build --build-arg APP_ENV=local -t boncuisine-server .
 
-.PHONY: fake-data
-fake-data: ## populate the database with test data
-	make migrate-reset
+.PHONY: dummy-data
+dummy-data: ## populate the database with dummy data, doesn't work
 	@echo "Populating test data..."
-	@docker exec -it postgres psql "$(DB_URL)" -f /testdata/testdata.sql
+
 
 .PHONY: migrate
 migrate: ## run all new database migrations
@@ -43,6 +43,11 @@ migrate: ## run all new database migrations
 migrate-down: ## revert database to the last migration step
 	@echo "Reverting database to the last migration step..."
 	@$(MIGRATE) down 1
+
+.PHONY: migrate-force
+migrate-force: ## force migration
+	@read -p "Forcing database migration at: " name; \
+	$(MIGRATE) force $${name// /_}
 
 .PHONY: migrate-new
 migrate-new: ## create a new database migration
@@ -55,3 +60,13 @@ migrate-reset: ## reset database and re-run all migrations
 	@$(MIGRATE) drop
 	@echo "Running all database migrations..."
 	@$(MIGRATE) up
+
+.PHONY: migrate-test
+migrate-test: ## run migrations, drop migrations, then run migrations
+	@echo "Resetting database..."
+	@$(MIGRATE) drop
+	@echo "Running all database migrations..."
+	@$(MIGRATE) up
+	@$(MIGRATE) down
+	@$(MIGRATE) up
+	@echo "Success..."
