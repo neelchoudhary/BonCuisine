@@ -1,0 +1,247 @@
+basePath: /api/v1
+definitions:
+  models.Cuisine:
+    properties:
+      cuisine_id:
+        type: integer
+      cuisine_name:
+        type: string
+    type: object
+  models.Recipe:
+    properties:
+      cuisine_name:
+        type: string
+      difficulty:
+        type: string
+      image_data:
+        type: string
+      num_servings:
+        type: string
+      r_time:
+        type: string
+      recipe_id:
+        type: integer
+      recipe_name:
+        type: string
+    type: object
+  models.RecipeIngredient:
+    properties:
+      amount:
+        type: integer
+      image_data:
+        type: string
+      ingredient_id:
+        type: integer
+      ingredient_name:
+        type: string
+    type: object
+  models.SavedRecipe:
+    properties:
+      recipe_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      created_on:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      user_id:
+        type: integer
+      user_name:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: BonCuisinie API Support
+    url: http://www.swagger.io/support
+  description: API for the BonCuisine app.
+  license: {}
+  title: BonCuisine API
+  version: 1.0.0
+paths:
+  /cuisines/:
+    get:
+      consumes:
+      - application/json
+      description: Gets all existing cuisines.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Cuisine'
+            type: array
+      summary: Get all cuisines
+      tags:
+      - Cuisines
+  /login/:
+    post:
+      consumes:
+      - application/json
+      description: Attempts to login the user given the valid credentials.
+      parameters:
+      - description: Existing User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      summary: User login
+      tags:
+      - Authentication
+  /protectedEndpoint/:
+    get:
+      consumes:
+      - application/json
+      description: TODO.
+      produces:
+      - application/json
+      summary: TODO
+      tags:
+      - Authentication
+  /recipe/{recipe_id}/ingredients/:
+    get:
+      consumes:
+      - application/json
+      description: Gets all ingredients for a given recipe by recipe ID.
+      parameters:
+      - description: Recipe ID
+        in: path
+        name: recipe_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.RecipeIngredient'
+            type: array
+      summary: Get recipe ingredients
+      tags:
+      - Recipes
+  /recipes/:
+    get:
+      consumes:
+      - application/json
+      description: Gets all existing recipes.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Recipe'
+            type: array
+      summary: Get all recipes
+      tags:
+      - Recipes
+  /savedrecipes/{user_id}/:
+    get:
+      consumes:
+      - application/json
+      description: Gets all recipes saved by a given user by user ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.SavedRecipe'
+            type: array
+      summary: Get user saved recipes
+      tags:
+      - Users
+  /savedrecipes/{user_id}/{recipe_id}/:
+    delete:
+      consumes:
+      - application/json
+      description: Removes an existing saved recipe for a user given a user ID and
+        recipe ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: Recipe ID
+        in: path
+        name: recipe_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SavedRecipe'
+      summary: Removes a saved recipe for a user
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Adds a new saved recipe for a user given a user ID and recipe ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: Recipe ID
+        in: path
+        name: recipe_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SavedRecipe'
+      summary: Add a saved recipe for a user
+      tags:
+      - Users
+  /signup/:
+    post:
+      consumes:
+      - application/json
+      description: Attempts to signup the user.
+      parameters:
+      - description: New User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      summary: User signup
+      tags:
+      - Authentication
+swagger: "2.0"

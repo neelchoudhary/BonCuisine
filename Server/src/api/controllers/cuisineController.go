@@ -21,6 +21,14 @@ func logFatal(err error) {
 	}
 }
 
+// GetAllCuisines godoc
+// @Summary Get all cuisines
+// @Description Gets all existing cuisines.
+// @Tags Cuisines
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} models.Cuisine
+// @Router /cuisines/ [get]
 func (c Controller) GetAllCuisines(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var cuisine models.Cuisine
