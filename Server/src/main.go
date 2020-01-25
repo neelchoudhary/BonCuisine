@@ -42,7 +42,7 @@ func main() {
 
 	controller := controllers.Controller{}
 
-	router.HandleFunc("/", homeLink)
+//	router.HandleFunc("/", homeLink)
 	router.HandleFunc(basePath+"/recipes", controller.GetAllRecipes(db)).Methods("GET")
 	router.HandleFunc(basePath+"/cuisines", controller.GetAllCuisines(db)).Methods("GET")
 	router.HandleFunc(basePath+"/recipe/{recipe_id}/ingredients", controller.GetRecipeIngredients(db)).Methods("GET")
@@ -55,7 +55,7 @@ func main() {
 	router.HandleFunc(basePath+"/signup", controller.Signup(db)).Methods("POST")
 	router.HandleFunc(basePath+"/login", controller.Login(db)).Methods("POST")
 
-	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+	router.PathPrefix("/").Handler(httpSwagger.WrapHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

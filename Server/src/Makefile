@@ -23,6 +23,7 @@ stop-db: ## stop the database
 
 .PHONY: run-server 
 run-server: ## run a local containerized instance of the api
+	swag init
 	./entrypoint.sh
 
 .PHONY: build-docker-server
