@@ -119,7 +119,7 @@ func logFatal(err error) {
 	}
 }
 
-// Connect to postgresql db
+// ConnectDB connect to postgresql db
 func ConnectDB(env string) *sql.DB {
 	fmt.Println("Connecting... ")
 	dbConnection := getDBCredentials(env)
@@ -144,6 +144,7 @@ func ConnectDB(env string) *sql.DB {
 	return db
 }
 
+// LoadSampleData loads sample data
 func LoadSampleData(db *sql.DB) {
 	fmt.Println("Loading Sample Data..")
 	query, err := ioutil.ReadFile("db/sample_data/sample_data.sql")
@@ -156,17 +157,18 @@ func LoadSampleData(db *sql.DB) {
 	fmt.Println("Loaded Sample Data")
 }
 
+// MigrateUp .
 // Used for development and continuous integration
 // migrate create -ext sql -dir db/migrations -seq create_users_table
 // migrate -database postgres://postgres:password@localhost:5432/postgres?sslmode=disable -path db/migrations up
 // migrate -database postgres://postgres:password@localhost:5432/postgres?sslmode=disable -path db/migrations down
 func MigrateUp(dbConnection DBConnection) {
 	fmt.Println("Migrating Up...")
-	sourceUrl := "file://./db/migrations"
+	sourceURL := "file://./db/migrations"
 	// postgres://user:password@host:port/dbname?query
-	localDbUrl := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
+	localDbURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
 		dbConnection.User, dbConnection.Password, dbConnection.Host, dbConnection.DbName)
-	m, err := migrate.New(sourceUrl, localDbUrl)
+	m, err := migrate.New(sourceURL, localDbURL)
 	if err != nil {
 		logFatal(err)
 	}

@@ -5,14 +5,28 @@ import (
 	"fmt"
 	"log"
 
-	account "github.com/neelchoudhary/boncuisine/pkg/v1/account/api"
 	recipe "github.com/neelchoudhary/boncuisine/pkg/v1/recipe/api"
+	user "github.com/neelchoudhary/boncuisine/pkg/v1/user/api"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 func main() {
 	fmt.Println("Client")
-	conn, err := grpc.Dial("localhost:3000", grpc.WithInsecure())
+
+	tls := true
+	opts := grpc.WithInsecure()
+	if tls {
+		certFile := "ssl/ca.crt" // Certificate Authority Trust certificate
+		creds, sslErr := credentials.NewClientTLSFromFile(certFile, "")
+		if sslErr != nil {
+			log.Fatalf("Error while loading CA trust certificate: %v", sslErr)
+			return
+		}
+		opts = grpc.WithTransportCredentials(creds)
+	}
+
+	conn, err := grpc.Dial("localhost:3000", opts)
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
@@ -20,7 +34,7 @@ func main() {
 	defer conn.Close()
 
 	//	c := recipe.NewRecipeServiceClient(conn)
-	a := account.NewAccountServiceClient(conn)
+	a := user.NewUserServiceClient(conn)
 	//	getAllRecipesTest(c)
 	//	getAllCuisinesTest(c)
 	getSavedRecipesTest(a)
@@ -48,9 +62,9 @@ func getAllCuisinesTest(c recipe.RecipeServiceClient) {
 	log.Printf("Response from: %v", res.GetCuisines())
 }
 
-func getSavedRecipesTest(c account.AccountServiceClient) {
+func getSavedRecipesTest(c user.UserServiceClient) {
 	fmt.Println("Starting to do a GetSavedRecipes RPC...")
-	req := &account.GetSavedRecipiesRequest{
+	req := &user.GetSavedRecipiesRequest{
 		UserId: 1,
 	}
 	res, err := c.GetSavedRecipes(context.Background(), req)
@@ -60,9 +74,9 @@ func getSavedRecipesTest(c account.AccountServiceClient) {
 	log.Printf("Response from: %v", res.GetSavedRecipes())
 }
 
-func addSavedRecipeTest(c account.AccountServiceClient) {
+func addSavedRecipeTest(c user.UserServiceClient) {
 	fmt.Println("Starting to do a AddSavedRecipe RPC...")
-	req := &account.AddSavedRecipeRequest{
+	req := &user.AddSavedRecipeRequest{
 		UserId:   1,
 		RecipeId: 4,
 	}
@@ -73,9 +87,9 @@ func addSavedRecipeTest(c account.AccountServiceClient) {
 	log.Printf("Response from: %v", res.GetSuccess())
 }
 
-func removeSavedRecipeTest(c account.AccountServiceClient) {
+func removeSavedRecipeTest(c user.UserServiceClient) {
 	fmt.Println("Starting to do a RemoveSavedRecipe RPC...")
-	req := &account.RemoveSavedRecipeRequest{
+	req := &user.RemoveSavedRecipeRequest{
 		UserId:   1,
 		RecipeId: 4,
 	}

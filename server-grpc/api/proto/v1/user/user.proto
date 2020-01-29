@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-package account;
-option go_package="account";
+package user;
+option go_package="user";
 
 message User {
     int64 id = 1;
@@ -43,7 +43,7 @@ message RemoveSavedRecipeResponse {
     bool success = 1;
 }
 
-service AccountService {
+service UserService {
     rpc GetSavedRecipes(GetSavedRecipiesRequest) returns (GetSavedRecipiesResponse) {};
     rpc AddSavedRecipe(AddSavedRecipeRequest) returns (AddSavedRecipeResponse) {};
     rpc RemoveSavedRecipe(RemoveSavedRecipeRequest) returns (RemoveSavedRecipeResponse) {};
