@@ -22,24 +22,16 @@ stop-db: ## stop the database
 	docker stop boncuisine-db
 
 .PHONY: run-server 
-run-server: ## run a local instance of the api
+run-server: ## run the grpc server locally
 	./entrypoint.sh
 
-.PHONY: run-auth-server
-run-auth-server: ## run a local instance of the api
-	go run cmd/auth/server/main.go
-
-.PHONY: run-recipe-server
-run-recipe-server: ## run a local instance of the api
-	go run cmd/recipe/server/main.go
-
 .PHONY: run-auth-client 
-run-auth-client: ## run a local instance of the api
-	go run cmd/auth/client/main.go
+run-auth-client: ## run a local instance of a test client
+	go run cmd/auth/client.go
 
 .PHONY: run-recipe-client 
-run-recipe-client: ## run a local instance of the api
-	go run cmd/recipe/client/main.go
+run-recipe-client: ## run a local instance of a test client
+	go run cmd/recipe/client.go
 
 .PHONY: build-docker-server
 build-docker-server: ## use for testing if builds work

@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"github.com/neelchoudhary/boncuisine/api/models"
+	"github.com/neelchoudhary/boncuisine/db/models"
 	"github.com/neelchoudhary/boncuisine/pkg/utils"
 )
 

@@ -28,7 +28,7 @@ func main() {
 	}
 
 	// Get token from safe space
-	data, err := ioutil.ReadFile("cmd/client-token/accessToken")
+	data, err := ioutil.ReadFile("cmd/auth/accessToken")
 	if err != nil {
 		log.Fatalf("Unable to read access token file: %v", err)
 	}
@@ -40,7 +40,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	conn, err := grpc.Dial("localhost:3001", opts, grpc.WithPerRPCCredentials(jwtCreds))
+	conn, err := grpc.Dial("localhost:3000", opts, grpc.WithPerRPCCredentials(jwtCreds))
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}

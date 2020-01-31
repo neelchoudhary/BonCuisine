@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/neelchoudhary/boncuisine/api/models"
+	"github.com/neelchoudhary/boncuisine/db/models"
+	repository "github.com/neelchoudhary/boncuisine/db/repositories"
 	recipe "github.com/neelchoudhary/boncuisine/pkg/v1/recipe/api"
-	"github.com/neelchoudhary/boncuisine/pkg/v1/recipe/repository"
 )
 
 type recipeServiceServer struct {

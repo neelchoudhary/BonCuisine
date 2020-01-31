@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/neelchoudhary/boncuisine/api/models"
+	"github.com/neelchoudhary/boncuisine/db/models"
+	repository "github.com/neelchoudhary/boncuisine/db/repositories"
 	user "github.com/neelchoudhary/boncuisine/pkg/v1/user/api"
-	"github.com/neelchoudhary/boncuisine/pkg/v1/user/repository"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -71,7 +71,7 @@ func (s *userServiceServer) Login(ctx context.Context, req *user.LoginRequest) (
 		err := bcrypt.CompareHashAndPassword([]byte(userToLogIn.Password), []byte(password))
 		if err != nil {
 			// Error, incorrect password
-			log.Fatal("Incorrect password"
+			log.Fatal("Incorrect password")
 		} else {
 			// Create a new token object, specifying signing method and the claims
 			// you would like it to contain.

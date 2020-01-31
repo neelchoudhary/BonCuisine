@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"net"
@@ -9,9 +10,11 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/neelchoudhary/boncuisine/api/driver"
+	"github.com/neelchoudhary/boncuisine/db/driver"
 	recipe "github.com/neelchoudhary/boncuisine/pkg/v1/recipe/api"
 	recipeService "github.com/neelchoudhary/boncuisine/pkg/v1/recipe/service"
+	user "github.com/neelchoudhary/boncuisine/pkg/v1/user/api"
+	userService "github.com/neelchoudhary/boncuisine/pkg/v1/user/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -19,16 +22,24 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// DB ...
+type DB struct {
+	db *sql.DB
+}
+
 func main() {
 	env := "local"
-	if err := runServer(context.Background(), recipeService.NewRecipeServiceServer(driver.ConnectDB(env)), "3001"); err != nil {
+	db := DB{db: driver.ConnectDB(env)}.db
+	userService := userService.NewUserServiceServer(db)
+	recipeService := recipeService.NewRecipeServiceServer(db)
+	if err := runServer(context.Background(), userService, recipeService, "3000"); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }
 
 // RunServer registers gRPC service and run server
-func runServer(ctx context.Context, recipeServiceServer recipe.RecipeServiceServer, port string) error {
+func runServer(ctx context.Context, userServiceServer user.UserServiceServer, recipeServiceServer recipe.RecipeServiceServer, port string) error {
 	listen, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		return err
@@ -50,7 +61,8 @@ func runServer(ctx context.Context, recipeServiceServer recipe.RecipeServiceServ
 	opts = append(opts, grpc.UnaryInterceptor(serverInterceptor))
 	server := grpc.NewServer(opts...)
 
-	// register service
+	// register services
+	user.RegisterUserServiceServer(server, userServiceServer)
 	recipe.RegisterRecipeServiceServer(server, recipeServiceServer)
 
 	// start gRPC server

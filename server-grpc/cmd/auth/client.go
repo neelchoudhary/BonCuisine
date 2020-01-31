@@ -72,7 +72,7 @@ func loginTest(c user.UserServiceClient) {
 	}
 	log.Printf("Response from: %v", res.GetSuccess())
 	log.Printf("Response from: %v", res.GetToken())
-	err = ioutil.WriteFile("cmd/client-token/accessToken", []byte(res.GetToken()), 0600)
+	err = ioutil.WriteFile("cmd/auth/accessToken", []byte(res.GetToken()), 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
