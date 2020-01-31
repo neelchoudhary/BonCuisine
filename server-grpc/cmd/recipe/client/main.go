@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 
 	recipe "github.com/neelchoudhary/boncuisine/pkg/v1/recipe/api"
@@ -12,7 +13,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Client")
+	fmt.Println("Recipe Client")
 
 	tls := true
 	opts := grpc.WithInsecure()
@@ -26,20 +27,46 @@ func main() {
 		opts = grpc.WithTransportCredentials(creds)
 	}
 
-	conn, err := grpc.Dial("localhost:3000", opts)
+	// Get token from safe space
+	data, err := ioutil.ReadFile("cmd/client-token/accessToken")
+	if err != nil {
+		log.Fatalf("Unable to read access token file: %v", err)
+	}
+	if string(data) == "" {
+		log.Fatalf("No token! ")
+	}
+	jwtCreds := tokenAuth{string(data)}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	conn, err := grpc.Dial("localhost:3001", opts, grpc.WithPerRPCCredentials(jwtCreds))
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
 
 	defer conn.Close()
 
-	//	c := recipe.NewRecipeServiceClient(conn)
-	a := user.NewUserServiceClient(conn)
-	//	getAllRecipesTest(c)
-	//	getAllCuisinesTest(c)
-	getSavedRecipesTest(a)
-	removeSavedRecipeTest(a)
-	getSavedRecipesTest(a)
+	c := recipe.NewRecipeServiceClient(conn)
+	// getAllRecipesTest(c)
+	getAllCuisinesTest(c)
+	// getSavedRecipesTest(u)
+	// removeSavedRecipeTest(u)
+	// getSavedRecipesTest(c)
+}
+
+type tokenAuth struct {
+	token string
+}
+
+func (t tokenAuth) GetRequestMetadata(ctx context.Context, in ...string) (map[string]string, error) {
+	return map[string]string{
+		"authorization": "Bearer " + t.token,
+	}, nil
+}
+
+func (tokenAuth) RequireTransportSecurity() bool {
+	return true
 }
 
 func getAllRecipesTest(c recipe.RecipeServiceClient) {
@@ -65,7 +92,7 @@ func getAllCuisinesTest(c recipe.RecipeServiceClient) {
 func getSavedRecipesTest(c user.UserServiceClient) {
 	fmt.Println("Starting to do a GetSavedRecipes RPC...")
 	req := &user.GetSavedRecipiesRequest{
-		UserId: 1,
+		UserId: "1",
 	}
 	res, err := c.GetSavedRecipes(context.Background(), req)
 	if err != nil {
@@ -77,7 +104,7 @@ func getSavedRecipesTest(c user.UserServiceClient) {
 func addSavedRecipeTest(c user.UserServiceClient) {
 	fmt.Println("Starting to do a AddSavedRecipe RPC...")
 	req := &user.AddSavedRecipeRequest{
-		UserId:   1,
+		UserId:   "1",
 		RecipeId: 4,
 	}
 	res, err := c.AddSavedRecipe(context.Background(), req)
@@ -90,7 +117,7 @@ func addSavedRecipeTest(c user.UserServiceClient) {
 func removeSavedRecipeTest(c user.UserServiceClient) {
 	fmt.Println("Starting to do a RemoveSavedRecipe RPC...")
 	req := &user.RemoveSavedRecipeRequest{
-		UserId:   1,
+		UserId:   "1",
 		RecipeId: 4,
 	}
 	res, err := c.RemoveSavedRecipe(context.Background(), req)

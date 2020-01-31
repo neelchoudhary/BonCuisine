@@ -10,7 +10,7 @@ CREATE TABLE cuisines (
 );
 
 CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
+    user_id VARCHAR (255) PRIMARY KEY,
     name VARCHAR (255) NOT NULL,
     user_name VARCHAR (255) UNIQUE NOT NULL,
     email VARCHAR (355) UNIQUE NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE ingredients (
 );
 
 CREATE TABLE saved_recipes (
-    user_id INTEGER NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
     recipe_id INTEGER NOT NULL,
     PRIMARY KEY (user_id, recipe_id),
     CONSTRAINT saved_recipe_user_id_fkey FOREIGN KEY (user_id)

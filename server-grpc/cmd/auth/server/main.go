@@ -1,19 +1,29 @@
-package grpc
+package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
+	"os"
 
-	recipe "github.com/neelchoudhary/boncuisine/pkg/v1/recipe/api"
+	"github.com/neelchoudhary/boncuisine/api/driver"
 	user "github.com/neelchoudhary/boncuisine/pkg/v1/user/api"
-
+	userService "github.com/neelchoudhary/boncuisine/pkg/v1/user/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
+func main() {
+	env := "local"
+	if err := runServer(context.Background(), userService.NewUserServiceServer(driver.ConnectDB(env)), "3000"); err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		os.Exit(1)
+	}
+}
+
 // RunServer registers gRPC service and run server
-func RunServer(ctx context.Context, recipeServiceServer recipe.RecipeServiceServer, userServiceServer user.UserServiceServer, port string) error {
+func runServer(ctx context.Context, userServiceServer user.UserServiceServer, port string) error {
 	listen, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		return err
@@ -34,8 +44,7 @@ func RunServer(ctx context.Context, recipeServiceServer recipe.RecipeServiceServ
 
 	server := grpc.NewServer(opts...)
 
-	// register service
-	recipe.RegisterRecipeServiceServer(server, recipeServiceServer)
+	// register auth service
 	user.RegisterUserServiceServer(server, userServiceServer)
 
 	// start gRPC server

@@ -14,6 +14,7 @@ require (
 	github.com/gorilla/mux v1.7.3
 	github.com/lib/pq v1.3.0
 	github.com/mailru/easyjson v0.7.0 // indirect
+	github.com/satori/go.uuid v1.2.0
 	github.com/swaggo/http-swagger v0.0.0-20200103000832-0e9263c4b516
 	github.com/swaggo/swag v1.6.5
 	golang.org/x/crypto v0.0.0-20200117160349-530e935923ad

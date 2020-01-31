@@ -149,10 +149,10 @@ func LoadSampleData(db *sql.DB) {
 	fmt.Println("Loading Sample Data..")
 	query, err := ioutil.ReadFile("db/sample_data/sample_data.sql")
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 	if _, err := db.Exec(string(query)); err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 	fmt.Println("Loaded Sample Data")
 }

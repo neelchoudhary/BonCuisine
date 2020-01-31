@@ -1,10 +1,10 @@
 BEGIN;
 /*COPY users FROM '/var/sampledata/users.csv' DELIMITER ',' CSV HEADER;*/
-INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES (1,'Seth McGee','Charles','hej@zi.th','IN','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
-INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES (2,'Roy Phillips','Stanley','nohocu@zo.tr','NV','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
-INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES (3,'Joshua Buchanan','Todd','ap@ziuv.ax','OK','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
-INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES (4,'Harriett McDonald','Jay','bimpik@josovik.ie','SC','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
-INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES (5,'Franklin Patrick','Hunter','ow@civul.lv','NY','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
+INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES ('1','Seth McGee','Charles','hej@zi.th','IN','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
+INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES ('2','Roy Phillips','Stanley','nohocu@zo.tr','NV','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
+INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES ('3','Joshua Buchanan','Todd','ap@ziuv.ax','OK','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
+INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES ('4','Harriett McDonald','Jay','bimpik@josovik.ie','SC','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
+INSERT INTO users(user_id,name,user_name,email,password,created_on) VALUES ('5','Franklin Patrick','Hunter','ow@civul.lv','NY','2016-06-22 19:10:25-07') ON CONFLICT DO NOTHING;
 
 /*COPY cuisines FROM '/var/sampledata/cuisines.csv' DELIMITER ',' CSV HEADER;*/
 INSERT INTO cuisines(cuisine_id,cuisine_name) VALUES (1,'American') ON CONFLICT DO NOTHING;
@@ -68,13 +68,13 @@ INSERT INTO recipe_ingredients(ingredient_id,recipe_id,amount) VALUES (9,1,7) ON
 INSERT INTO recipe_ingredients(ingredient_id,recipe_id,amount) VALUES (10,1,8) ON CONFLICT DO NOTHING;
 
 /*COPY saved_recipes FROM '/var/sampledata/savedrecipes.csv' DELIMITER ',' CSV HEADER;*/
-INSERT INTO saved_recipes(user_id,recipe_id) VALUES (1,1) ON CONFLICT DO NOTHING;
-INSERT INTO saved_recipes(user_id,recipe_id) VALUES (2,2) ON CONFLICT DO NOTHING;
-INSERT INTO saved_recipes(user_id,recipe_id) VALUES (3,3) ON CONFLICT DO NOTHING;
-INSERT INTO saved_recipes(user_id,recipe_id) VALUES (4,4) ON CONFLICT DO NOTHING;
-INSERT INTO saved_recipes(user_id,recipe_id) VALUES (5,1) ON CONFLICT DO NOTHING;
-INSERT INTO saved_recipes(user_id,recipe_id) VALUES (1,3) ON CONFLICT DO NOTHING;
-INSERT INTO saved_recipes(user_id,recipe_id) VALUES (2,4) ON CONFLICT DO NOTHING;
-INSERT INTO saved_recipes(user_id,recipe_id) VALUES (3,2) ON CONFLICT DO NOTHING;
+INSERT INTO saved_recipes(user_id,recipe_id) VALUES ('1',1) ON CONFLICT DO NOTHING;
+INSERT INTO saved_recipes(user_id,recipe_id) VALUES ('2',2) ON CONFLICT DO NOTHING;
+INSERT INTO saved_recipes(user_id,recipe_id) VALUES ('3',3) ON CONFLICT DO NOTHING;
+INSERT INTO saved_recipes(user_id,recipe_id) VALUES ('4',4) ON CONFLICT DO NOTHING;
+INSERT INTO saved_recipes(user_id,recipe_id) VALUES ('5',1) ON CONFLICT DO NOTHING;
+INSERT INTO saved_recipes(user_id,recipe_id) VALUES ('1',3) ON CONFLICT DO NOTHING;
+INSERT INTO saved_recipes(user_id,recipe_id) VALUES ('2',4) ON CONFLICT DO NOTHING;
+INSERT INTO saved_recipes(user_id,recipe_id) VALUES ('3',2) ON CONFLICT DO NOTHING;
 
 COMMIT;

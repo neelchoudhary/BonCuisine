@@ -22,9 +22,24 @@ stop-db: ## stop the database
 	docker stop boncuisine-db
 
 .PHONY: run-server 
-run-server: ## run a local containerized instance of the api
-	swag init
+run-server: ## run a local instance of the api
 	./entrypoint.sh
+
+.PHONY: run-auth-server
+run-auth-server: ## run a local instance of the api
+	go run cmd/auth/server/main.go
+
+.PHONY: run-recipe-server
+run-recipe-server: ## run a local instance of the api
+	go run cmd/recipe/server/main.go
+
+.PHONY: run-auth-client 
+run-auth-client: ## run a local instance of the api
+	go run cmd/auth/client/main.go
+
+.PHONY: run-recipe-client 
+run-recipe-client: ## run a local instance of the api
+	go run cmd/recipe/client/main.go
 
 .PHONY: build-docker-server
 build-docker-server: ## use for testing if builds work
