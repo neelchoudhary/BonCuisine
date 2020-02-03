@@ -4,7 +4,6 @@ import (
 	"database/sql"
 
 	"github.com/neelchoudhary/boncuisine/db/models"
-	"github.com/neelchoudhary/boncuisine/pkg/utils"
 )
 
 // UserRepository struct
@@ -19,7 +18,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 // Login tries to find user with matching credentials
 func (r *UserRepository) Login(user models.User) (models.User, error) {
-	row := r.db.QueryRow("select * from users where user_name=$1", user.UserName)
+	row := r.db.QueryRow("SELECT * FROM users WHERE user_name=$1", user.UserName)
 	err := row.Scan(&user.ID, &user.FullName, &user.UserName, &user.Email, &user.Password, &user.CreatedOn)
 
 	if err != nil {
@@ -29,10 +28,10 @@ func (r *UserRepository) Login(user models.User) (models.User, error) {
 	return user, nil
 }
 
-// ContainsUser tries to find user with email
-func (r *UserRepository) ContainsUser(email string) (models.User, error) {
+// GetUserByEmail tries to find user with email
+func (r *UserRepository) GetUserByEmail(email string) (models.User, error) {
 	var user models.User
-	row := r.db.QueryRow("select * from users where email=$1", email)
+	row := r.db.QueryRow("SELECT * FROM users WHERE email=$1", email)
 	err := row.Scan(&user.ID, &user.FullName, &user.UserName, &user.Email, &user.Password, &user.CreatedOn)
 	if err == sql.ErrNoRows {
 		return user, nil
@@ -44,10 +43,14 @@ func (r *UserRepository) ContainsUser(email string) (models.User, error) {
 }
 
 // CreateUser create new user for signup
-func (r *UserRepository) CreateUser(user models.User) {
+func (r *UserRepository) CreateUser(user models.User) error {
 	var userID string
-	stmt := "insert into users (user_id, name, user_name, email, password, created_on) values ($1, $2, $3, $4, $5, $6) RETURNING user_id;"
-	err := r.db.QueryRow(stmt, user.ID, user.FullName, user.UserName, user.Email, user.Password, user.CreatedOn).Scan(&userID)
+	statement := "INSERT INTO users (user_id, name, user_name, email, password, created_on) VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id;"
+	err := r.db.QueryRow(statement, user.ID, user.FullName, user.UserName, user.Email, user.Password, user.CreatedOn).Scan(&userID)
 
-	utils.LogFatal(err)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -2,7 +2,6 @@ package repository
 
 import (
 	"github.com/neelchoudhary/boncuisine/db/models"
-	"github.com/neelchoudhary/boncuisine/pkg/utils"
 
 	"database/sql"
 )
@@ -18,9 +17,11 @@ func NewCuisineRepository(db *sql.DB) *CuisineRepository {
 }
 
 // GetAllCuisines Gets all cuisines from db
-func (r *CuisineRepository) GetAllCuisines() []models.Cuisine {
+func (r *CuisineRepository) GetAllCuisines() ([]models.Cuisine, error) {
 	rows, err := r.db.Query("SELECT cuisine_id, cuisine_name FROM cuisines;")
-	utils.LogFatal(err)
+	if err != nil {
+		return nil, err
+	}
 
 	defer rows.Close()
 
@@ -28,9 +29,11 @@ func (r *CuisineRepository) GetAllCuisines() []models.Cuisine {
 	for rows.Next() {
 		cuisine := models.Cuisine{}
 		err := rows.Scan(&cuisine.ID, &cuisine.CuisineName)
-		utils.LogFatal(err)
+		if err != nil {
+			return nil, err
+		}
 		cuisines = append(cuisines, cuisine)
 	}
 
-	return cuisines
+	return cuisines, nil
 }

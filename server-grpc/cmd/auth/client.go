@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -14,11 +15,15 @@ import (
 func main() {
 	fmt.Println("Auth Client")
 
+	var port = flag.String("port", "3000", "server port")
+	var certFilePath = flag.String("certFilePath", "ssl/ca.crt", "TLS ca cert file path")
+	var accessTokenPath = flag.String("accessTokenPath", "cmd/auth/accessToken", "Access token path")
+
 	tls := true
 	opts := grpc.WithInsecure()
 	if tls {
-		certFile := "ssl/ca.crt" // Certificate Authority Trust certificate
-		creds, sslErr := credentials.NewClientTLSFromFile(certFile, "")
+		// Certificate Authority Trust certificate
+		creds, sslErr := credentials.NewClientTLSFromFile(*certFilePath, "")
 		if sslErr != nil {
 			log.Fatalf("Error while loading CA trust certificate: %v", sslErr)
 			return
@@ -26,7 +31,7 @@ func main() {
 		opts = grpc.WithTransportCredentials(creds)
 	}
 
-	conn, err := grpc.Dial("localhost:3000", opts)
+	conn, err := grpc.Dial("localhost:"+*port, opts)
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
@@ -34,11 +39,8 @@ func main() {
 	defer conn.Close()
 
 	c := user.NewUserServiceClient(conn)
-	// getSavedRecipesTest(c)
-	// removeSavedRecipeTest(c)
-	// getSavedRecipesTest(c)
 	// signupTest(c)
-	loginTest(c)
+	loginTest(c, *accessTokenPath)
 }
 
 func signupTest(c user.UserServiceClient) {
@@ -58,7 +60,7 @@ func signupTest(c user.UserServiceClient) {
 	log.Printf("Response from: %v", res.GetSuccess())
 }
 
-func loginTest(c user.UserServiceClient) {
+func loginTest(c user.UserServiceClient, accessTokenPath string) {
 	fmt.Println("Starting to do a Login RPC...")
 	req := &user.LoginRequest{
 		LoginUser: &user.LoginUser{

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -28,18 +29,25 @@ type DB struct {
 }
 
 func main() {
-	env := "local"
-	db := DB{db: driver.ConnectDB(env)}.db
+	var env = flag.String("env", "local", "environment type: local, develop, staging, production")
+	var port = flag.String("port", "3000", "server port")
+	var certFilePath = flag.String("certFilePath", "ssl/server.crt", "TLS cert file path")
+	var keyFilePath = flag.String("keyFilePath", "ssl/server.pem", "TLS key file path")
+	//	var jwtSecret = flag.String("jwtSecret", "", "JWT secret")
+
+	flag.Parse()
+
+	db := DB{db: driver.ConnectDB(*env)}.db
 	userService := userService.NewUserServiceServer(db)
 	recipeService := recipeService.NewRecipeServiceServer(db)
-	if err := runServer(context.Background(), userService, recipeService, "3000"); err != nil {
+	if err := runServer(context.Background(), userService, recipeService, *port, *certFilePath, *keyFilePath); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }
 
 // RunServer registers gRPC service and run server
-func runServer(ctx context.Context, userServiceServer user.UserServiceServer, recipeServiceServer recipe.RecipeServiceServer, port string) error {
+func runServer(ctx context.Context, userServiceServer user.UserServiceServer, recipeServiceServer recipe.RecipeServiceServer, port string, certFilePath string, keyFilePath string) error {
 	listen, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		return err
@@ -49,9 +57,7 @@ func runServer(ctx context.Context, userServiceServer user.UserServiceServer, re
 	opts := []grpc.ServerOption{}
 	tls := true
 	if tls {
-		certFile := "ssl/server.crt"
-		keyFile := "ssl/server.pem"
-		creds, sslErr := credentials.NewServerTLSFromFile(certFile, keyFile)
+		creds, sslErr := credentials.NewServerTLSFromFile(certFilePath, keyFilePath)
 		if sslErr != nil {
 			log.Fatalf("Failed loading certificates: %v", sslErr)
 		}
@@ -75,13 +81,17 @@ func serverInterceptor(ctx context.Context,
 	req interface{},
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler) (interface{}, error) {
-	// Skip authorize when GetJWT is requested
-	fmt.Println(info.FullMethod)
-	// TODO change
+	// Skip authorize when signing up for logging in
 	if info.FullMethod != "/user.UserService/Signup" && info.FullMethod != "/user.UserService/Login" {
-		if err := authorize(ctx); err != nil {
+		userID, err := authorize(ctx)
+		if err != nil {
 			return nil, err
 		}
+		md := metadata.Pairs("userid", userID)
+		ctx = metadata.NewIncomingContext(ctx, md)
+		// Calls the handler
+		h, err := handler(ctx, req)
+		return h, err
 	}
 
 	// Calls the handler
@@ -90,22 +100,22 @@ func serverInterceptor(ctx context.Context,
 }
 
 // authorize function authorizes the token received from Metadata
-func authorize(ctx context.Context) error {
+func authorize(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return status.Errorf(codes.InvalidArgument, "Retrieving metadata is failed")
+		return "", status.Errorf(codes.InvalidArgument, "Retrieving metadata is failed")
 	}
 
 	authHeader, ok := md["authorization"]
 	if !ok {
-		return status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
+		return "", status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
 	}
 
 	token := authHeader[0]
 
 	const prefix = "Bearer "
 	if !strings.HasPrefix(token, prefix) {
-		return status.Error(codes.Unauthenticated, `missing "Bearer " prefix in "Authorization" header`)
+		return "", status.Error(codes.Unauthenticated, `missing "Bearer " prefix in "Authorization" header`)
 	}
 
 	// if strings.TrimPrefix(token, prefix) != a.Token {
@@ -114,34 +124,28 @@ func authorize(ctx context.Context) error {
 
 	token = strings.TrimPrefix(token, prefix)
 	// validateToken function validates the token
-	err := validateToken(token)
+	userID, err := validateToken(token)
 
 	if err != nil {
-		return status.Errorf(codes.Unauthenticated, err.Error())
+		return "", status.Errorf(codes.Unauthenticated, err.Error())
 	}
-	return nil
+	return userID, nil
 }
 
-func validateToken(tokenString string) error {
-	// Parse takes the token string and a function for looking up the key. The latter is especially
-	// useful if you use multiple keys for your application.  The standard is to use 'kid' in the
-	// head of the token to identify which key to use, but the parsed token (head and claims) is provided
-	// to the callback, providing flexibility.
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Don't forget to validate the alg is what you expect:
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
+func validateToken(tokenString string) (string, error) {
 
-		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
+	claims := &userService.Claims{}
+
+	// Parse the JWT string and store the result in `claims`.
+	// Note that we are passing the key in this method as well. This method will return an error
+	// if the token is invalid (if it has expired according to the expiry time we set on sign in),
+	// or if the signature does not match
+	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte("verySecretSecret"), nil
 	})
-
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		fmt.Println(claims["id"], claims["email"], claims["name"])
-	} else {
-		fmt.Println(err)
-		return err
+	if err != nil || !tkn.Valid {
+		return "", err
 	}
-	return nil
+
+	return claims.UserID, nil
 }

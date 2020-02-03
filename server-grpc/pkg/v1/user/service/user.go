@@ -13,16 +13,22 @@ import (
 	user "github.com/neelchoudhary/boncuisine/pkg/v1/user/api"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-type userServiceServer struct {
-	userRecipeRepo *repository.UserRecipeRepository
-	userRepo       *repository.UserRepository
+type Claims struct {
+	UserID string `json:"user_id"`
+	jwt.StandardClaims
 }
 
-// NewUserServiceServer TODO
+type userServiceServer struct {
+	userRepo *repository.UserRepository
+}
+
+// NewUserServiceServer contructor to assign repo
 func NewUserServiceServer(db *sql.DB) user.UserServiceServer {
-	return &userServiceServer{userRecipeRepo: repository.NewUserRecipeRepository(db), userRepo: repository.NewUserRepository(db)}
+	return &userServiceServer{userRepo: repository.NewUserRepository(db)}
 }
 
 func (s *userServiceServer) Signup(ctx context.Context, req *user.SignupRequest) (*user.SignupResponse, error) {
@@ -46,10 +52,9 @@ func (s *userServiceServer) Signup(ctx context.Context, req *user.SignupRequest)
 		Username:  signUpUser.Username,
 		CreatedOn: time.Now().Format("2006-01-02T15:04:05"),
 	}
-	s.userRepo.CreateUser(*signUpPbToData(newUser))
-
+	err = s.userRepo.CreateUser(*signUpPbToData(newUser))
 	if err != nil {
-		log.Fatal(err)
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Repo error creating user: %s", err.Error()))
 	}
 
 	res := &user.SignupResponse{
@@ -63,87 +68,41 @@ func (s *userServiceServer) Login(ctx context.Context, req *user.LoginRequest) (
 	loginUser := req.GetLoginUser()
 	email := loginUser.GetEmail()
 	password := loginUser.GetPassword()
-	userToLogIn, err := s.userRepo.ContainsUser(email)
+	userToLogIn, err := s.userRepo.GetUserByEmail(email)
 	if err != nil {
-		log.Fatal(err)
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Repo error getting user by email: %s", err.Error()))
 	}
+
 	if userToLogIn.ID != "" {
 		err := bcrypt.CompareHashAndPassword([]byte(userToLogIn.Password), []byte(password))
 		if err != nil {
 			// Error, incorrect password
-			log.Fatal("Incorrect password")
-		} else {
-			// Create a new token object, specifying signing method and the claims
-			// you would like it to contain.
-			token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-				"id":    userToLogIn.ID,
-				"email": userToLogIn.Email,
-				"name":  userToLogIn.FullName,
-			})
-
-			// Sign and get the complete encoded token as a string using the secret
-			tokenString, err := token.SignedString([]byte("verySecretSecret"))
-			if err != nil {
-				log.Fatal("Failed to sign token: ", err)
-			}
-			res := &user.LoginResponse{
-				Success: true,
-				Token:   tokenString,
-			}
-			return res, nil
+			return nil, status.Errorf(codes.PermissionDenied, fmt.Sprintf("Invalid Login Credientials: %s", err.Error()))
 		}
-	} else {
-		// Error, user does not exist
-	}
+		// Token expires in 50 minutes
+		expirationTime := time.Now().Add(50 * time.Minute)
+		claims := &Claims{
+			UserID: userToLogIn.ID,
+			StandardClaims: jwt.StandardClaims{
+				// In JWT, the expiry time is expressed as unix milliseconds
+				ExpiresAt: expirationTime.Unix(),
+			},
+		}
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	res := &user.LoginResponse{
-		Success: false,
+		// Login and get the encoded token as a string using the secret
+		tokenString, err := token.SignedString([]byte("verySecretSecret"))
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, fmt.Sprintf("Failed to sign token: %s", err.Error()))
+		}
+		res := &user.LoginResponse{
+			Success: true,
+			Token:   tokenString,
+		}
+		return res, nil
 	}
-
-	return res, nil
-}
-
-func (s *userServiceServer) GetSavedRecipes(ctx context.Context, req *user.GetSavedRecipiesRequest) (*user.GetSavedRecipiesResponse, error) {
-	fmt.Printf("Get saved recipes was invoked.\n")
-	userID := req.GetUserId()
-	recipes := s.userRecipeRepo.GetUserRecipes(userID)
-	var pbSavedRecipes []*user.SavedRecipe
-	for _, recipe := range recipes {
-		pbSavedRecipes = append(pbSavedRecipes, dataToSavedRecipePb(recipe))
-	}
-	res := &user.GetSavedRecipiesResponse{
-		SavedRecipes: pbSavedRecipes,
-	}
-	return res, nil
-}
-
-func (s *userServiceServer) AddSavedRecipe(ctx context.Context, req *user.AddSavedRecipeRequest) (*user.AddSavedRecipeResponse, error) {
-	fmt.Printf("Add saved recipe was invoked.")
-	userID := req.GetUserId()
-	recipeID := req.GetRecipeId()
-	s.userRecipeRepo.AddUserRecipe(userID, recipeID)
-	res := &user.AddSavedRecipeResponse{
-		Success: true,
-	}
-	return res, nil
-}
-
-func (s *userServiceServer) RemoveSavedRecipe(ctx context.Context, req *user.RemoveSavedRecipeRequest) (*user.RemoveSavedRecipeResponse, error) {
-	fmt.Printf("Remove saved recipe was invoked.")
-	userID := req.GetUserId()
-	recipeID := req.GetRecipeId()
-	s.userRecipeRepo.RemoveUserRecipe(userID, recipeID)
-	res := &user.RemoveSavedRecipeResponse{
-		Success: true,
-	}
-	return res, nil
-}
-
-func dataToSavedRecipePb(data models.SavedRecipe) *user.SavedRecipe {
-	return &user.SavedRecipe{
-		UserId:   data.UserID,
-		RecipeId: data.RecipeID,
-	}
+	// User with the given email does not exist
+	return nil, status.Errorf(codes.PermissionDenied, fmt.Sprintf("Invalid Login Credientials: %s", err.Error()))
 }
 
 func signUpPbToData(data user.User) *models.User {

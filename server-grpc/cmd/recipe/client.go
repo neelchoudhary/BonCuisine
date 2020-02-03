@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 
 	recipe "github.com/neelchoudhary/boncuisine/pkg/v1/recipe/api"
-	user "github.com/neelchoudhary/boncuisine/pkg/v1/user/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -15,11 +15,15 @@ import (
 func main() {
 	fmt.Println("Recipe Client")
 
+	var port = flag.String("port", "3000", "server port")
+	var certFilePath = flag.String("certFilePath", "ssl/ca.crt", "TLS ca cert file path")
+	var accessTokenPath = flag.String("accessTokenPath", "cmd/auth/accessToken", "Access token path")
+
 	tls := true
 	opts := grpc.WithInsecure()
 	if tls {
-		certFile := "ssl/ca.crt" // Certificate Authority Trust certificate
-		creds, sslErr := credentials.NewClientTLSFromFile(certFile, "")
+		// Certificate Authority Trust certificate
+		creds, sslErr := credentials.NewClientTLSFromFile(*certFilePath, "")
 		if sslErr != nil {
 			log.Fatalf("Error while loading CA trust certificate: %v", sslErr)
 			return
@@ -28,7 +32,7 @@ func main() {
 	}
 
 	// Get token from safe space
-	data, err := ioutil.ReadFile("cmd/auth/accessToken")
+	data, err := ioutil.ReadFile(*accessTokenPath)
 	if err != nil {
 		log.Fatalf("Unable to read access token file: %v", err)
 	}
@@ -40,7 +44,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	conn, err := grpc.Dial("localhost:3000", opts, grpc.WithPerRPCCredentials(jwtCreds))
+	conn, err := grpc.Dial("localhost:"+*port, opts, grpc.WithPerRPCCredentials(jwtCreds))
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
@@ -49,10 +53,13 @@ func main() {
 
 	c := recipe.NewRecipeServiceClient(conn)
 	// getAllRecipesTest(c)
-	getAllCuisinesTest(c)
-	// getSavedRecipesTest(u)
-	// removeSavedRecipeTest(u)
-	// getSavedRecipesTest(c)
+	//getAllCuisinesTest(c)
+	// getRecipeIngredients(c)
+	getSavedRecipesTest(c)
+	addSavedRecipeTest(c)
+	getSavedRecipesTest(c)
+	removeSavedRecipeTest(c)
+	getSavedRecipesTest(c)
 }
 
 type tokenAuth struct {
@@ -89,11 +96,21 @@ func getAllCuisinesTest(c recipe.RecipeServiceClient) {
 	log.Printf("Response from: %v", res.GetCuisines())
 }
 
-func getSavedRecipesTest(c user.UserServiceClient) {
-	fmt.Println("Starting to do a GetSavedRecipes RPC...")
-	req := &user.GetSavedRecipiesRequest{
-		UserId: "1",
+func getRecipeIngredients(c recipe.RecipeServiceClient) {
+	fmt.Println("Starting to do a GetRecipeIngredients RPC...")
+	req := &recipe.GetRecipeIngredientsRequest{
+		RecipeId: 1,
 	}
+	res, err := c.GetRecipeIngredients(context.Background(), req)
+	if err != nil {
+		log.Fatalf("Error while calling RPC: %v", err)
+	}
+	log.Printf("Response from: %v", res.GetRecipeIngredients())
+}
+
+func getSavedRecipesTest(c recipe.RecipeServiceClient) {
+	fmt.Println("Starting to do a GetSavedRecipes RPC...")
+	req := &recipe.Empty{}
 	res, err := c.GetSavedRecipes(context.Background(), req)
 	if err != nil {
 		log.Fatalf("Error while calling RPC: %v", err)
@@ -101,10 +118,9 @@ func getSavedRecipesTest(c user.UserServiceClient) {
 	log.Printf("Response from: %v", res.GetSavedRecipes())
 }
 
-func addSavedRecipeTest(c user.UserServiceClient) {
+func addSavedRecipeTest(c recipe.RecipeServiceClient) {
 	fmt.Println("Starting to do a AddSavedRecipe RPC...")
-	req := &user.AddSavedRecipeRequest{
-		UserId:   "1",
+	req := &recipe.AddSavedRecipeRequest{
 		RecipeId: 4,
 	}
 	res, err := c.AddSavedRecipe(context.Background(), req)
@@ -114,10 +130,9 @@ func addSavedRecipeTest(c user.UserServiceClient) {
 	log.Printf("Response from: %v", res.GetSuccess())
 }
 
-func removeSavedRecipeTest(c user.UserServiceClient) {
+func removeSavedRecipeTest(c recipe.RecipeServiceClient) {
 	fmt.Println("Starting to do a RemoveSavedRecipe RPC...")
-	req := &user.RemoveSavedRecipeRequest{
-		UserId:   "1",
+	req := &recipe.RemoveSavedRecipeRequest{
 		RecipeId: 4,
 	}
 	res, err := c.RemoveSavedRecipe(context.Background(), req)

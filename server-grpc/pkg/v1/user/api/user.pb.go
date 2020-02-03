@@ -213,303 +213,6 @@ func (m *LoginUser) GetPassword() string {
 	return ""
 }
 
-type SavedRecipe struct {
-	UserId               string   `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RecipeId             int64    `protobuf:"varint,2,opt,name=recipe_id,json=recipeId,proto3" json:"recipe_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SavedRecipe) Reset()         { *m = SavedRecipe{} }
-func (m *SavedRecipe) String() string { return proto.CompactTextString(m) }
-func (*SavedRecipe) ProtoMessage()    {}
-func (*SavedRecipe) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{3}
-}
-
-func (m *SavedRecipe) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SavedRecipe.Unmarshal(m, b)
-}
-func (m *SavedRecipe) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SavedRecipe.Marshal(b, m, deterministic)
-}
-func (m *SavedRecipe) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SavedRecipe.Merge(m, src)
-}
-func (m *SavedRecipe) XXX_Size() int {
-	return xxx_messageInfo_SavedRecipe.Size(m)
-}
-func (m *SavedRecipe) XXX_DiscardUnknown() {
-	xxx_messageInfo_SavedRecipe.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SavedRecipe proto.InternalMessageInfo
-
-func (m *SavedRecipe) GetUserId() string {
-	if m != nil {
-		return m.UserId
-	}
-	return ""
-}
-
-func (m *SavedRecipe) GetRecipeId() int64 {
-	if m != nil {
-		return m.RecipeId
-	}
-	return 0
-}
-
-type GetSavedRecipiesRequest struct {
-	UserId               string   `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GetSavedRecipiesRequest) Reset()         { *m = GetSavedRecipiesRequest{} }
-func (m *GetSavedRecipiesRequest) String() string { return proto.CompactTextString(m) }
-func (*GetSavedRecipiesRequest) ProtoMessage()    {}
-func (*GetSavedRecipiesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{4}
-}
-
-func (m *GetSavedRecipiesRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetSavedRecipiesRequest.Unmarshal(m, b)
-}
-func (m *GetSavedRecipiesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetSavedRecipiesRequest.Marshal(b, m, deterministic)
-}
-func (m *GetSavedRecipiesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetSavedRecipiesRequest.Merge(m, src)
-}
-func (m *GetSavedRecipiesRequest) XXX_Size() int {
-	return xxx_messageInfo_GetSavedRecipiesRequest.Size(m)
-}
-func (m *GetSavedRecipiesRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetSavedRecipiesRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetSavedRecipiesRequest proto.InternalMessageInfo
-
-func (m *GetSavedRecipiesRequest) GetUserId() string {
-	if m != nil {
-		return m.UserId
-	}
-	return ""
-}
-
-type GetSavedRecipiesResponse struct {
-	SavedRecipes         []*SavedRecipe `protobuf:"bytes,1,rep,name=savedRecipes,proto3" json:"savedRecipes,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
-}
-
-func (m *GetSavedRecipiesResponse) Reset()         { *m = GetSavedRecipiesResponse{} }
-func (m *GetSavedRecipiesResponse) String() string { return proto.CompactTextString(m) }
-func (*GetSavedRecipiesResponse) ProtoMessage()    {}
-func (*GetSavedRecipiesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{5}
-}
-
-func (m *GetSavedRecipiesResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetSavedRecipiesResponse.Unmarshal(m, b)
-}
-func (m *GetSavedRecipiesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetSavedRecipiesResponse.Marshal(b, m, deterministic)
-}
-func (m *GetSavedRecipiesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetSavedRecipiesResponse.Merge(m, src)
-}
-func (m *GetSavedRecipiesResponse) XXX_Size() int {
-	return xxx_messageInfo_GetSavedRecipiesResponse.Size(m)
-}
-func (m *GetSavedRecipiesResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetSavedRecipiesResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetSavedRecipiesResponse proto.InternalMessageInfo
-
-func (m *GetSavedRecipiesResponse) GetSavedRecipes() []*SavedRecipe {
-	if m != nil {
-		return m.SavedRecipes
-	}
-	return nil
-}
-
-type AddSavedRecipeRequest struct {
-	UserId               string   `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RecipeId             int64    `protobuf:"varint,2,opt,name=recipe_id,json=recipeId,proto3" json:"recipe_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *AddSavedRecipeRequest) Reset()         { *m = AddSavedRecipeRequest{} }
-func (m *AddSavedRecipeRequest) String() string { return proto.CompactTextString(m) }
-func (*AddSavedRecipeRequest) ProtoMessage()    {}
-func (*AddSavedRecipeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{6}
-}
-
-func (m *AddSavedRecipeRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AddSavedRecipeRequest.Unmarshal(m, b)
-}
-func (m *AddSavedRecipeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AddSavedRecipeRequest.Marshal(b, m, deterministic)
-}
-func (m *AddSavedRecipeRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddSavedRecipeRequest.Merge(m, src)
-}
-func (m *AddSavedRecipeRequest) XXX_Size() int {
-	return xxx_messageInfo_AddSavedRecipeRequest.Size(m)
-}
-func (m *AddSavedRecipeRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_AddSavedRecipeRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_AddSavedRecipeRequest proto.InternalMessageInfo
-
-func (m *AddSavedRecipeRequest) GetUserId() string {
-	if m != nil {
-		return m.UserId
-	}
-	return ""
-}
-
-func (m *AddSavedRecipeRequest) GetRecipeId() int64 {
-	if m != nil {
-		return m.RecipeId
-	}
-	return 0
-}
-
-type AddSavedRecipeResponse struct {
-	Success              bool     `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *AddSavedRecipeResponse) Reset()         { *m = AddSavedRecipeResponse{} }
-func (m *AddSavedRecipeResponse) String() string { return proto.CompactTextString(m) }
-func (*AddSavedRecipeResponse) ProtoMessage()    {}
-func (*AddSavedRecipeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{7}
-}
-
-func (m *AddSavedRecipeResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AddSavedRecipeResponse.Unmarshal(m, b)
-}
-func (m *AddSavedRecipeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AddSavedRecipeResponse.Marshal(b, m, deterministic)
-}
-func (m *AddSavedRecipeResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddSavedRecipeResponse.Merge(m, src)
-}
-func (m *AddSavedRecipeResponse) XXX_Size() int {
-	return xxx_messageInfo_AddSavedRecipeResponse.Size(m)
-}
-func (m *AddSavedRecipeResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_AddSavedRecipeResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_AddSavedRecipeResponse proto.InternalMessageInfo
-
-func (m *AddSavedRecipeResponse) GetSuccess() bool {
-	if m != nil {
-		return m.Success
-	}
-	return false
-}
-
-type RemoveSavedRecipeRequest struct {
-	UserId               string   `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RecipeId             int64    `protobuf:"varint,2,opt,name=recipe_id,json=recipeId,proto3" json:"recipe_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *RemoveSavedRecipeRequest) Reset()         { *m = RemoveSavedRecipeRequest{} }
-func (m *RemoveSavedRecipeRequest) String() string { return proto.CompactTextString(m) }
-func (*RemoveSavedRecipeRequest) ProtoMessage()    {}
-func (*RemoveSavedRecipeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{8}
-}
-
-func (m *RemoveSavedRecipeRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RemoveSavedRecipeRequest.Unmarshal(m, b)
-}
-func (m *RemoveSavedRecipeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RemoveSavedRecipeRequest.Marshal(b, m, deterministic)
-}
-func (m *RemoveSavedRecipeRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RemoveSavedRecipeRequest.Merge(m, src)
-}
-func (m *RemoveSavedRecipeRequest) XXX_Size() int {
-	return xxx_messageInfo_RemoveSavedRecipeRequest.Size(m)
-}
-func (m *RemoveSavedRecipeRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_RemoveSavedRecipeRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RemoveSavedRecipeRequest proto.InternalMessageInfo
-
-func (m *RemoveSavedRecipeRequest) GetUserId() string {
-	if m != nil {
-		return m.UserId
-	}
-	return ""
-}
-
-func (m *RemoveSavedRecipeRequest) GetRecipeId() int64 {
-	if m != nil {
-		return m.RecipeId
-	}
-	return 0
-}
-
-type RemoveSavedRecipeResponse struct {
-	Success              bool     `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *RemoveSavedRecipeResponse) Reset()         { *m = RemoveSavedRecipeResponse{} }
-func (m *RemoveSavedRecipeResponse) String() string { return proto.CompactTextString(m) }
-func (*RemoveSavedRecipeResponse) ProtoMessage()    {}
-func (*RemoveSavedRecipeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{9}
-}
-
-func (m *RemoveSavedRecipeResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RemoveSavedRecipeResponse.Unmarshal(m, b)
-}
-func (m *RemoveSavedRecipeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RemoveSavedRecipeResponse.Marshal(b, m, deterministic)
-}
-func (m *RemoveSavedRecipeResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RemoveSavedRecipeResponse.Merge(m, src)
-}
-func (m *RemoveSavedRecipeResponse) XXX_Size() int {
-	return xxx_messageInfo_RemoveSavedRecipeResponse.Size(m)
-}
-func (m *RemoveSavedRecipeResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_RemoveSavedRecipeResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RemoveSavedRecipeResponse proto.InternalMessageInfo
-
-func (m *RemoveSavedRecipeResponse) GetSuccess() bool {
-	if m != nil {
-		return m.Success
-	}
-	return false
-}
-
 type SignupRequest struct {
 	SignUpUser           *SignUpUser `protobuf:"bytes,1,opt,name=signUpUser,proto3" json:"signUpUser,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
@@ -521,7 +224,7 @@ func (m *SignupRequest) Reset()         { *m = SignupRequest{} }
 func (m *SignupRequest) String() string { return proto.CompactTextString(m) }
 func (*SignupRequest) ProtoMessage()    {}
 func (*SignupRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{10}
+	return fileDescriptor_116e343673f7ffaf, []int{3}
 }
 
 func (m *SignupRequest) XXX_Unmarshal(b []byte) error {
@@ -560,7 +263,7 @@ func (m *SignupResponse) Reset()         { *m = SignupResponse{} }
 func (m *SignupResponse) String() string { return proto.CompactTextString(m) }
 func (*SignupResponse) ProtoMessage()    {}
 func (*SignupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{11}
+	return fileDescriptor_116e343673f7ffaf, []int{4}
 }
 
 func (m *SignupResponse) XXX_Unmarshal(b []byte) error {
@@ -599,7 +302,7 @@ func (m *LoginRequest) Reset()         { *m = LoginRequest{} }
 func (m *LoginRequest) String() string { return proto.CompactTextString(m) }
 func (*LoginRequest) ProtoMessage()    {}
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{12}
+	return fileDescriptor_116e343673f7ffaf, []int{5}
 }
 
 func (m *LoginRequest) XXX_Unmarshal(b []byte) error {
@@ -639,7 +342,7 @@ func (m *LoginResponse) Reset()         { *m = LoginResponse{} }
 func (m *LoginResponse) String() string { return proto.CompactTextString(m) }
 func (*LoginResponse) ProtoMessage()    {}
 func (*LoginResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_116e343673f7ffaf, []int{13}
+	return fileDescriptor_116e343673f7ffaf, []int{6}
 }
 
 func (m *LoginResponse) XXX_Unmarshal(b []byte) error {
@@ -678,13 +381,6 @@ func init() {
 	proto.RegisterType((*User)(nil), "user.User")
 	proto.RegisterType((*SignUpUser)(nil), "user.SignUpUser")
 	proto.RegisterType((*LoginUser)(nil), "user.LoginUser")
-	proto.RegisterType((*SavedRecipe)(nil), "user.SavedRecipe")
-	proto.RegisterType((*GetSavedRecipiesRequest)(nil), "user.GetSavedRecipiesRequest")
-	proto.RegisterType((*GetSavedRecipiesResponse)(nil), "user.GetSavedRecipiesResponse")
-	proto.RegisterType((*AddSavedRecipeRequest)(nil), "user.AddSavedRecipeRequest")
-	proto.RegisterType((*AddSavedRecipeResponse)(nil), "user.AddSavedRecipeResponse")
-	proto.RegisterType((*RemoveSavedRecipeRequest)(nil), "user.RemoveSavedRecipeRequest")
-	proto.RegisterType((*RemoveSavedRecipeResponse)(nil), "user.RemoveSavedRecipeResponse")
 	proto.RegisterType((*SignupRequest)(nil), "user.SignupRequest")
 	proto.RegisterType((*SignupResponse)(nil), "user.SignupResponse")
 	proto.RegisterType((*LoginRequest)(nil), "user.LoginRequest")
@@ -694,40 +390,29 @@ func init() {
 func init() { proto.RegisterFile("user.proto", fileDescriptor_116e343673f7ffaf) }
 
 var fileDescriptor_116e343673f7ffaf = []byte{
-	// 516 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xc1, 0x6e, 0xd3, 0x40,
-	0x10, 0xc5, 0x4e, 0xe2, 0xc6, 0x93, 0x36, 0xa5, 0xdb, 0x42, 0x8d, 0x4b, 0xa1, 0xda, 0x53, 0x85,
-	0x44, 0x85, 0x8c, 0x7a, 0xac, 0x50, 0xe1, 0x80, 0x2a, 0x51, 0x01, 0x1b, 0x95, 0x03, 0x97, 0xca,
-	0xd8, 0x43, 0x65, 0x91, 0xd8, 0xc6, 0x6b, 0x87, 0xcf, 0xe1, 0x23, 0xf9, 0x01, 0xb4, 0xbb, 0xde,
-	0x8d, 0xdd, 0xc4, 0xf8, 0xc2, 0xcd, 0x33, 0x6f, 0xde, 0x9b, 0xb7, 0xab, 0xe7, 0x05, 0xa8, 0x38,
-	0x16, 0x67, 0x79, 0x91, 0x95, 0x19, 0x19, 0x8a, 0x6f, 0xfa, 0xdb, 0x82, 0xe1, 0x0d, 0xc7, 0x82,
-	0x4c, 0xc1, 0x4e, 0x62, 0xcf, 0x3a, 0xb1, 0x4e, 0x5d, 0x66, 0x27, 0x31, 0xf1, 0x61, 0xfc, 0xbd,
-	0x9a, 0xcf, 0xd3, 0x70, 0x81, 0x9e, 0x2d, 0xbb, 0xa6, 0x16, 0x98, 0x20, 0x4b, 0x6c, 0xa0, 0x30,
-	0x5d, 0x93, 0x03, 0x18, 0xe1, 0x22, 0x4c, 0xe6, 0xde, 0x50, 0x02, 0xaa, 0x10, 0x8c, 0x3c, 0xe4,
-	0xfc, 0x57, 0x56, 0xc4, 0xde, 0x48, 0x31, 0x74, 0x4d, 0x8e, 0x01, 0xa2, 0x02, 0xc3, 0x12, 0xe3,
-	0xdb, 0x2c, 0xf5, 0x1c, 0x89, 0xba, 0x75, 0xe7, 0x63, 0x4a, 0x97, 0x00, 0xb3, 0xe4, 0x2e, 0xbd,
-	0xc9, 0xa5, 0xcd, 0xa6, 0x2d, 0xeb, 0x1f, 0xb6, 0xec, 0x2e, 0x5b, 0x83, 0x2e, 0x5b, 0xc3, 0xb6,
-	0x2d, 0x7a, 0x01, 0xee, 0x87, 0xec, 0x2e, 0x49, 0xe5, 0x5a, 0x43, 0xb7, 0xba, 0xe8, 0xf6, 0x3d,
-	0xfa, 0x3b, 0x98, 0xcc, 0xc2, 0x25, 0xc6, 0x0c, 0xa3, 0x24, 0x47, 0x72, 0x08, 0x5b, 0xc2, 0xcb,
-	0xad, 0xb9, 0x63, 0x47, 0x94, 0x57, 0x31, 0x39, 0x02, 0xb7, 0x90, 0x23, 0x02, 0x12, 0x22, 0x03,
-	0x36, 0x56, 0x8d, 0xab, 0x98, 0x06, 0x70, 0xf8, 0x1e, 0xcb, 0x95, 0x4e, 0x82, 0x9c, 0xe1, 0xcf,
-	0x0a, 0x79, 0xd9, 0x29, 0x48, 0x3f, 0x83, 0xb7, 0xce, 0xe1, 0x79, 0x96, 0x72, 0x24, 0xe7, 0xb0,
-	0xcd, 0x57, 0xa6, 0xb8, 0x67, 0x9d, 0x0c, 0x4e, 0x27, 0xc1, 0xde, 0x99, 0x8c, 0x45, 0xc3, 0x2e,
-	0x6b, 0x8d, 0xd1, 0x6b, 0x78, 0x74, 0x19, 0xc7, 0x4d, 0xbc, 0xc7, 0x44, 0xdf, 0xa9, 0x1e, 0xdf,
-	0x97, 0xab, 0xfd, 0x79, 0xb0, 0xc5, 0xab, 0x28, 0x42, 0xce, 0xa5, 0xde, 0x98, 0xe9, 0x92, 0x7e,
-	0x02, 0x8f, 0xe1, 0x22, 0x5b, 0xe2, 0x7f, 0x73, 0x71, 0x0e, 0x4f, 0x36, 0x28, 0xf6, 0x1a, 0xb9,
-	0x84, 0x1d, 0x11, 0xc7, 0x2a, 0xd7, 0xdb, 0x5f, 0x01, 0x70, 0x93, 0x4f, 0x39, 0x3d, 0x09, 0x1e,
-	0xd6, 0x37, 0x6a, 0xfa, 0xac, 0x31, 0x43, 0x5f, 0xc0, 0x54, 0x4b, 0xf4, 0xae, 0xbb, 0x80, 0x6d,
-	0x99, 0x42, 0xbd, 0xed, 0x25, 0xb8, 0x73, 0x9d, 0xca, 0x7a, 0xd9, 0xae, 0x5a, 0x66, 0xc2, 0xca,
-	0x56, 0x13, 0xf4, 0x0d, 0xec, 0xd4, 0xf4, 0xbe, 0x4d, 0x22, 0xe2, 0x65, 0xf6, 0x03, 0xd3, 0x3a,
-	0xc9, 0xaa, 0x08, 0xfe, 0xd8, 0x30, 0x11, 0x4a, 0x33, 0x2c, 0x96, 0x49, 0x24, 0x12, 0xe4, 0x28,
-	0xef, 0x64, 0x7f, 0x75, 0x46, 0x73, 0x19, 0xfe, 0x41, 0xbb, 0xa9, 0x96, 0xd2, 0x07, 0x24, 0x80,
-	0x91, 0xf4, 0x41, 0x48, 0xc3, 0xac, 0x26, 0xed, 0xb7, 0x7a, 0x86, 0xc3, 0x60, 0xb7, 0x15, 0x64,
-	0xe4, 0xe4, 0x58, 0x4d, 0x76, 0xfc, 0x13, 0xfe, 0xb3, 0x2e, 0xd8, 0x68, 0x5e, 0xc3, 0xb4, 0x1d,
-	0x3d, 0x72, 0xa4, 0x38, 0x1b, 0xf3, 0xed, 0x3f, 0xdd, 0x0c, 0x1a, 0xb9, 0x2f, 0xb0, 0xb7, 0x96,
-	0x21, 0x52, 0xbb, 0xe8, 0x8a, 0xab, 0xff, 0xbc, 0x13, 0xd7, 0xba, 0x6f, 0x9d, 0xaf, 0xf2, 0x75,
-	0xfe, 0xe6, 0xc8, 0xa7, 0xfa, 0xf5, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x86, 0xb1, 0x7d, 0x2a,
-	0xb8, 0x05, 0x00, 0x00,
+	// 346 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x92, 0x41, 0x4b, 0xfb, 0x40,
+	0x10, 0xc5, 0xff, 0x49, 0xd3, 0xfc, 0x9b, 0xa9, 0xad, 0xb2, 0xed, 0x21, 0x14, 0x04, 0xd9, 0x93,
+	0x08, 0x16, 0xa9, 0x78, 0x2c, 0xa2, 0x67, 0x41, 0x48, 0xe9, 0xc5, 0x8b, 0xc4, 0x64, 0x2c, 0xc1,
+	0x74, 0x37, 0x66, 0x93, 0xea, 0xb7, 0xf1, 0xab, 0xca, 0xce, 0x66, 0xd3, 0x56, 0xa8, 0xde, 0xf2,
+	0x66, 0xf6, 0xcd, 0xfb, 0xcd, 0x66, 0x01, 0x6a, 0x85, 0xe5, 0xb4, 0x28, 0x65, 0x25, 0x99, 0xa7,
+	0xbf, 0xf9, 0x97, 0x03, 0xde, 0x52, 0x61, 0xc9, 0x86, 0xe0, 0x66, 0x69, 0xe8, 0x9c, 0x39, 0xe7,
+	0x41, 0xe4, 0x66, 0x29, 0x9b, 0x40, 0xef, 0xb5, 0xce, 0x73, 0x11, 0xaf, 0x31, 0x74, 0xa9, 0xda,
+	0x6a, 0xdd, 0xd3, 0x66, 0xea, 0x75, 0x4c, 0xcf, 0x6a, 0x36, 0x86, 0x2e, 0xae, 0xe3, 0x2c, 0x0f,
+	0x3d, 0x6a, 0x18, 0xa1, 0x1d, 0x45, 0xac, 0xd4, 0x87, 0x2c, 0xd3, 0xb0, 0x6b, 0x1c, 0x56, 0xb3,
+	0x53, 0x80, 0xa4, 0xc4, 0xb8, 0xc2, 0xf4, 0x59, 0x8a, 0xd0, 0xa7, 0x6e, 0xd0, 0x54, 0x1e, 0x05,
+	0xdf, 0x00, 0x2c, 0xb2, 0x95, 0x58, 0x16, 0x84, 0xb9, 0x8b, 0xe5, 0xfc, 0x82, 0xe5, 0x1e, 0xc2,
+	0xea, 0x1c, 0xc2, 0xf2, 0xf6, 0xb1, 0xf8, 0x1c, 0x82, 0x07, 0xb9, 0xca, 0x04, 0xc5, 0xb6, 0x76,
+	0xe7, 0x90, 0xdd, 0xfd, 0x61, 0xbf, 0x83, 0x81, 0xc6, 0xae, 0x8b, 0x08, 0xdf, 0x6b, 0x54, 0x15,
+	0xbb, 0x02, 0x50, 0xed, 0x1e, 0x34, 0xa7, 0x3f, 0x3b, 0x99, 0xd2, 0x0f, 0xd9, 0xee, 0x17, 0xed,
+	0x9c, 0xe1, 0x17, 0x30, 0xb4, 0x23, 0x54, 0x21, 0x85, 0x42, 0x16, 0xc2, 0x7f, 0x55, 0x27, 0x09,
+	0x2a, 0x45, 0x03, 0x7a, 0x91, 0x95, 0x7c, 0x0e, 0x47, 0x44, 0x6b, 0xd3, 0x2e, 0x21, 0xc8, 0x2d,
+	0x7d, 0x13, 0x76, 0x6c, 0xc2, 0xda, 0xa5, 0xa2, 0xed, 0x09, 0x7e, 0x0b, 0x83, 0xc6, 0xfe, 0x57,
+	0x92, 0xbe, 0x8a, 0x4a, 0xbe, 0xa1, 0x68, 0x36, 0x36, 0x62, 0xf6, 0x09, 0x7d, 0x3d, 0x68, 0x81,
+	0xe5, 0x26, 0x4b, 0x90, 0xdd, 0x80, 0x6f, 0xd0, 0xd9, 0x68, 0xbb, 0x62, 0x7b, 0x17, 0x93, 0xf1,
+	0x7e, 0xd1, 0x64, 0xf2, 0x7f, 0x6c, 0x06, 0x5d, 0xc2, 0x60, 0x6c, 0x87, 0xd5, 0x9a, 0x46, 0x7b,
+	0x35, 0xeb, 0xb9, 0xf7, 0x9f, 0xe8, 0x25, 0xbf, 0xf8, 0xf4, 0xac, 0xaf, 0xbf, 0x03, 0x00, 0x00,
+	0xff, 0xff, 0x67, 0x59, 0xec, 0x17, 0xe4, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -744,9 +429,6 @@ const _ = grpc.SupportPackageIsVersion4
 type UserServiceClient interface {
 	Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SignupResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	GetSavedRecipes(ctx context.Context, in *GetSavedRecipiesRequest, opts ...grpc.CallOption) (*GetSavedRecipiesResponse, error)
-	AddSavedRecipe(ctx context.Context, in *AddSavedRecipeRequest, opts ...grpc.CallOption) (*AddSavedRecipeResponse, error)
-	RemoveSavedRecipe(ctx context.Context, in *RemoveSavedRecipeRequest, opts ...grpc.CallOption) (*RemoveSavedRecipeResponse, error)
 }
 
 type userServiceClient struct {
@@ -775,40 +457,10 @@ func (c *userServiceClient) Login(ctx context.Context, in *LoginRequest, opts ..
 	return out, nil
 }
 
-func (c *userServiceClient) GetSavedRecipes(ctx context.Context, in *GetSavedRecipiesRequest, opts ...grpc.CallOption) (*GetSavedRecipiesResponse, error) {
-	out := new(GetSavedRecipiesResponse)
-	err := c.cc.Invoke(ctx, "/user.UserService/GetSavedRecipes", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) AddSavedRecipe(ctx context.Context, in *AddSavedRecipeRequest, opts ...grpc.CallOption) (*AddSavedRecipeResponse, error) {
-	out := new(AddSavedRecipeResponse)
-	err := c.cc.Invoke(ctx, "/user.UserService/AddSavedRecipe", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) RemoveSavedRecipe(ctx context.Context, in *RemoveSavedRecipeRequest, opts ...grpc.CallOption) (*RemoveSavedRecipeResponse, error) {
-	out := new(RemoveSavedRecipeResponse)
-	err := c.cc.Invoke(ctx, "/user.UserService/RemoveSavedRecipe", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServiceServer is the server API for UserService service.
 type UserServiceServer interface {
 	Signup(context.Context, *SignupRequest) (*SignupResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	GetSavedRecipes(context.Context, *GetSavedRecipiesRequest) (*GetSavedRecipiesResponse, error)
-	AddSavedRecipe(context.Context, *AddSavedRecipeRequest) (*AddSavedRecipeResponse, error)
-	RemoveSavedRecipe(context.Context, *RemoveSavedRecipeRequest) (*RemoveSavedRecipeResponse, error)
 }
 
 // UnimplementedUserServiceServer can be embedded to have forward compatible implementations.
@@ -820,15 +472,6 @@ func (*UnimplementedUserServiceServer) Signup(ctx context.Context, req *SignupRe
 }
 func (*UnimplementedUserServiceServer) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
-}
-func (*UnimplementedUserServiceServer) GetSavedRecipes(ctx context.Context, req *GetSavedRecipiesRequest) (*GetSavedRecipiesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSavedRecipes not implemented")
-}
-func (*UnimplementedUserServiceServer) AddSavedRecipe(ctx context.Context, req *AddSavedRecipeRequest) (*AddSavedRecipeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddSavedRecipe not implemented")
-}
-func (*UnimplementedUserServiceServer) RemoveSavedRecipe(ctx context.Context, req *RemoveSavedRecipeRequest) (*RemoveSavedRecipeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveSavedRecipe not implemented")
 }
 
 func RegisterUserServiceServer(s *grpc.Server, srv UserServiceServer) {
@@ -871,60 +514,6 @@ func _UserService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetSavedRecipes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSavedRecipiesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).GetSavedRecipes(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user.UserService/GetSavedRecipes",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetSavedRecipes(ctx, req.(*GetSavedRecipiesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_AddSavedRecipe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddSavedRecipeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).AddSavedRecipe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user.UserService/AddSavedRecipe",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).AddSavedRecipe(ctx, req.(*AddSavedRecipeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_RemoveSavedRecipe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RemoveSavedRecipeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).RemoveSavedRecipe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user.UserService/RemoveSavedRecipe",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).RemoveSavedRecipe(ctx, req.(*RemoveSavedRecipeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _UserService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "user.UserService",
 	HandlerType: (*UserServiceServer)(nil),
@@ -936,18 +525,6 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _UserService_Login_Handler,
-		},
-		{
-			MethodName: "GetSavedRecipes",
-			Handler:    _UserService_GetSavedRecipes_Handler,
-		},
-		{
-			MethodName: "AddSavedRecipe",
-			Handler:    _UserService_AddSavedRecipe_Handler,
-		},
-		{
-			MethodName: "RemoveSavedRecipe",
-			Handler:    _UserService_RemoveSavedRecipe_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
