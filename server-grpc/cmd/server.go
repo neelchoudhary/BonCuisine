@@ -116,7 +116,7 @@ func main() {
 
 // RunServer registers gRPC service and run server
 func runServer(ctx context.Context, userServiceServer user.UserServiceServer, recipeServiceServer recipe.RecipeServiceServer, port string, certFilePath string, keyFilePath string) error {
-	listen, err := net.Listen("tcp", ":"+port)
+	listen, err := net.Listen("tcp", "dev.boncuisine-server.com:"+port)
 	if err != nil {
 		return err
 	}
