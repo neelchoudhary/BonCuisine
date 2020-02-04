@@ -14,20 +14,20 @@
 # "Share" files: ca.crt (needed by the client), server.csr (needed by the CA)
 
 # Changes these CN's to match your hosts in your environment if needed.
-SERVER_CN=boncuisine-develop-server-definition.boncuisineapp.com
+SERVER_CN=dev.boncuisine-server.com
 
 # Step 1: Generate Certificate Authority + Trust Certificate (ca.crt)
-openssl genrsa -passout pass:1111 -des3 -out ca.key 4096
-openssl req -passin pass:1111 -new -x509 -days 3650 -key ca.key -out ca.crt -subj "/CN=${SERVER_CN}"
+openssl genrsa -passout pass:1111 -des3 -out ssl_develop/ca.key 4096
+openssl req -passin pass:1111 -new -x509 -days 3650 -key ssl_develop/ca.key -out ssl_develop/ca.crt -subj "/CN=${SERVER_CN}"
 
 # Step 2: Generate the Server Private Key (server.key)
-openssl genrsa -passout pass:1111 -des3 -out server.key 4096
+openssl genrsa -passout pass:1111 -des3 -out ssl_develop/server.key 4096
 
 # Step 3: Get a certificate signing request from the CA (server.csr)
-openssl req -passin pass:1111 -new -key server.key -out server.csr -subj "/CN=${SERVER_CN}"
+openssl req -passin pass:1111 -new -key ssl_develop/server.key -out ssl_develop/server.csr -subj "/CN=${SERVER_CN}"
 
 # Step 4: Sign the certificate with the CA we created (it's called self signing) - server.crt
-openssl x509 -req -passin pass:1111 -days 3650 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt 
+openssl x509 -req -passin pass:1111 -days 3650 -in ssl_develop/server.csr -CA ssl_develop/ca.crt -CAkey ssl_develop/ca.key -set_serial 01 -out ssl_develop/server.crt 
 
 # Step 5: Convert the server certificate to .pem format (server.pem) - usable by gRPC
-openssl pkcs8 -topk8 -nocrypt -passin pass:1111 -in server.key -out server.pem
+openssl pkcs8 -topk8 -nocrypt -passin pass:1111 -in ssl_develop/server.key -out ssl_develop/server.pem
