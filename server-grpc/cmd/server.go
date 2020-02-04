@@ -10,6 +10,8 @@ import (
 	"os"
 	"strings"
 
+	"io/ioutil"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/neelchoudhary/boncuisine/db/driver"
 	recipe "github.com/neelchoudhary/boncuisine/pkg/v1/recipe/api"
@@ -21,11 +23,68 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/secretsmanager"
 )
 
 // DB ...
 type DB struct {
 	db *sql.DB
+}
+
+const (
+	cert = "server_cert"
+	key  = "server_key"
+)
+
+func getTLSKeys(env string, tlsType string) string {
+	var secretName string
+	secretName = env + "/tls/" + tlsType
+	region := "us-east-2"
+
+	//Create a Secrets Manager client
+	svc := secretsmanager.New(session.New(), aws.NewConfig().WithRegion(region))
+	input := &secretsmanager.GetSecretValueInput{
+		SecretId:     aws.String(secretName),
+		VersionStage: aws.String("AWSCURRENT"), // VersionStage defaults to AWSCURRENT if unspecified
+	}
+
+	result, err := svc.GetSecretValue(input)
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			case secretsmanager.ErrCodeDecryptionFailure:
+				// Secrets Manager can't decrypt the protected secret text using the provided KMS key.
+				fmt.Println(secretsmanager.ErrCodeDecryptionFailure, aerr.Error())
+
+			case secretsmanager.ErrCodeInternalServiceError:
+				// An error occurred on the server side.
+				fmt.Println(secretsmanager.ErrCodeInternalServiceError, aerr.Error())
+
+			case secretsmanager.ErrCodeInvalidParameterException:
+				// You provided an invalid value for a parameter.
+				fmt.Println(secretsmanager.ErrCodeInvalidParameterException, aerr.Error())
+
+			case secretsmanager.ErrCodeInvalidRequestException:
+				// You provided a parameter value that is not valid for the current state of the resource.
+				fmt.Println(secretsmanager.ErrCodeInvalidRequestException, aerr.Error())
+
+			case secretsmanager.ErrCodeResourceNotFoundException:
+				// We can't find the resource that you asked for.
+				fmt.Println(secretsmanager.ErrCodeResourceNotFoundException, aerr.Error())
+			}
+		} else {
+			// Print the error, cast err to awserr.Error to get the Code and
+			// Message from an error.
+			fmt.Println(err.Error())
+		}
+		log.Fatal(err.(awserr.Error))
+	}
+
+	return *result.SecretString
 }
 
 func main() {
@@ -34,6 +93,15 @@ func main() {
 	var certFilePath = flag.String("certFilePath", "ssl/server.crt", "TLS cert file path")
 	var keyFilePath = flag.String("keyFilePath", "ssl/server.pem", "TLS key file path")
 	//	var jwtSecret = flag.String("jwtSecret", "", "JWT secret")
+
+	err := ioutil.WriteFile(*certFilePath, []byte(getTLSKeys(*env, cert)), 0600)
+	if err != nil {
+		fmt.Println("Failed to write server cert file")
+	}
+	err = ioutil.WriteFile(*keyFilePath, []byte(getTLSKeys(*env, key)), 0600)
+	if err != nil {
+		fmt.Println("Failed to write server pem file")
+	}
 
 	flag.Parse()
 

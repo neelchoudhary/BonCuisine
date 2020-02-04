@@ -10,7 +10,63 @@ import (
 	recipe "github.com/neelchoudhary/boncuisine/pkg/v1/recipe/api"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/secretsmanager"
 )
+
+const (
+	cert = "client_cert"
+)
+
+func getTLSKeys(env string, tlsType string) string {
+	var secretName string
+	secretName = env + "/tls/" + tlsType
+	region := "us-east-2"
+
+	//Create a Secrets Manager client
+	svc := secretsmanager.New(session.New(), aws.NewConfig().WithRegion(region))
+	input := &secretsmanager.GetSecretValueInput{
+		SecretId:     aws.String(secretName),
+		VersionStage: aws.String("AWSCURRENT"), // VersionStage defaults to AWSCURRENT if unspecified
+	}
+
+	result, err := svc.GetSecretValue(input)
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			case secretsmanager.ErrCodeDecryptionFailure:
+				// Secrets Manager can't decrypt the protected secret text using the provided KMS key.
+				fmt.Println(secretsmanager.ErrCodeDecryptionFailure, aerr.Error())
+
+			case secretsmanager.ErrCodeInternalServiceError:
+				// An error occurred on the server side.
+				fmt.Println(secretsmanager.ErrCodeInternalServiceError, aerr.Error())
+
+			case secretsmanager.ErrCodeInvalidParameterException:
+				// You provided an invalid value for a parameter.
+				fmt.Println(secretsmanager.ErrCodeInvalidParameterException, aerr.Error())
+
+			case secretsmanager.ErrCodeInvalidRequestException:
+				// You provided a parameter value that is not valid for the current state of the resource.
+				fmt.Println(secretsmanager.ErrCodeInvalidRequestException, aerr.Error())
+
+			case secretsmanager.ErrCodeResourceNotFoundException:
+				// We can't find the resource that you asked for.
+				fmt.Println(secretsmanager.ErrCodeResourceNotFoundException, aerr.Error())
+			}
+		} else {
+			// Print the error, cast err to awserr.Error to get the Code and
+			// Message from an error.
+			fmt.Println(err.Error())
+		}
+		log.Fatal(err.(awserr.Error))
+	}
+
+	return *result.SecretString
+}
 
 func main() {
 	fmt.Println("Recipe Client")
@@ -22,6 +78,11 @@ func main() {
 	tls := true
 	opts := grpc.WithInsecure()
 	if tls {
+		err := ioutil.WriteFile(*certFilePath, []byte(getTLSKeys("local", cert)), 0600)
+		if err != nil {
+			fmt.Println("Failed to write client cert file")
+		}
+
 		// Certificate Authority Trust certificate
 		creds, sslErr := credentials.NewClientTLSFromFile(*certFilePath, "")
 		if sslErr != nil {
