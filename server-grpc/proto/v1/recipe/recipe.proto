@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package recipe;
+option go_package="recipe";
+
+message Recipe {
+    int64 id = 1;
+    string name = 2;
+    string time = 3;
+    string servings = 4;
+    string difficulty = 5;
+    string cuisine = 6;
+    bytes image = 7;
+}
+
+message Cuisine {
+    int64 id = 1;
+    string name = 2;
+}
+
+message RecipeIngredient {
+    int64 id = 1;
+    string name = 2;
+    int64 amount = 3;
+    bytes image = 4;
+}
+
+message GetAllRecipeResponse {
+    repeated Recipe recipes = 1;
+}
+
+message GetRecipeIngredientsRequest {
+    int64 recipe_id = 1;
+}
+
+message GetRecipeIngredientsResponse {
+    repeated RecipeIngredient recipeIngredients = 1;
+}
+
+message GetAllCuisinesResponse {
+    repeated Cuisine cuisines = 1;
+}
+
+message SavedRecipe {
+    string user_id = 1;
+    int64 recipe_id = 2;
+}
+
+message GetSavedRecipiesResponse {
+    repeated SavedRecipe savedRecipes = 1;
+}
+
+message AddSavedRecipeRequest {
+    int64 recipe_id = 2;
+}
+
+message AddSavedRecipeResponse {
+    bool success = 1;
+}
+
+message RemoveSavedRecipeRequest {
+    int64 recipe_id = 2;
+}
+
+message RemoveSavedRecipeResponse {
+    bool success = 1;
+}
+
+message Empty {
+
+}
+
+service RecipeService {
+    rpc GetAllRecipes(Empty) returns (GetAllRecipeResponse) {};
+    rpc GetRecipeIngredients(GetRecipeIngredientsRequest) returns (GetRecipeIngredientsResponse) {};
+    rpc GetAllCuisines(Empty) returns (GetAllCuisinesResponse) {};
+    rpc GetSavedRecipes(Empty) returns (GetSavedRecipiesResponse) {};
+    rpc AddSavedRecipe(AddSavedRecipeRequest) returns (AddSavedRecipeResponse) {};
+    rpc RemoveSavedRecipe(RemoveSavedRecipeRequest) returns (RemoveSavedRecipeResponse) {};
+}
