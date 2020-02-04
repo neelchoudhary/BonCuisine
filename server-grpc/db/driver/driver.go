@@ -121,9 +121,9 @@ func logFatal(err error) {
 
 // ConnectDB connect to postgresql db
 func ConnectDB(env string) *sql.DB {
-	fmt.Println("Connecting... ")
+	fmt.Println("Connecting... " + env)
 	dbConnection := getDBCredentials(env)
-	fmt.Println("Retreived Credentials")
+	fmt.Println("Retreived Credentials: " + dbConnection.Host)
 	var err error
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		dbConnection.Host, dbConnection.Port, dbConnection.User, dbConnection.Password, dbConnection.DbName)
