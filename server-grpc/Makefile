@@ -3,7 +3,6 @@ ENV := local
 CONFIG_FILE ?= ./config/$(ENV).yml
 DB_URL ?= $(shell sed -n 's/^dburl:[[:space:]]*"\(.*\)"/\1/p' $(CONFIG_FILE))
 MIGRATE := migrate -path=db/migrations -database "$(DB_URL)"
-LDFLAGS := -ldflags "-X github.com/neelchoudhary/boncuisine/api/driver.ENV=$(ENV)"
 
 .PHONY: default
 default: help
@@ -35,12 +34,7 @@ run-recipe-client: ## run a local instance of a test client
 
 .PHONY: build-docker-server
 build-docker-server: ## use for testing if builds work
-	docker build --build-arg APP_ENV=local -t boncuisine-server .
-
-.PHONY: dummy-data
-dummy-data: ## populate the database with dummy data, doesn't work
-	@echo "Populating test data..."
-
+	docker build --build-arg APP_ENV=develop -t boncuisine-server .
 
 .PHONY: migrate
 migrate: ## run all new database migrations

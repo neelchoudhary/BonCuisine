@@ -30,7 +30,7 @@ type DB struct {
 
 func main() {
 	var env = flag.String("env", "local", "environment type: local, develop, staging, production")
-	var port = flag.String("port", "3000", "server port")
+	var port = flag.String("port", "8080", "server port")
 	var certFilePath = flag.String("certFilePath", "ssl/server.crt", "TLS cert file path")
 	var keyFilePath = flag.String("keyFilePath", "ssl/server.pem", "TLS key file path")
 	//	var jwtSecret = flag.String("jwtSecret", "", "JWT secret")

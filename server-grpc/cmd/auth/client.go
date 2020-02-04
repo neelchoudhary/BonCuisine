@@ -15,7 +15,7 @@ import (
 func main() {
 	fmt.Println("Auth Client")
 
-	var port = flag.String("port", "3000", "server port")
+	var port = flag.String("port", "8080", "server port")
 	var certFilePath = flag.String("certFilePath", "ssl/ca.crt", "TLS ca cert file path")
 	var accessTokenPath = flag.String("accessTokenPath", "cmd/auth/accessToken", "Access token path")
 
