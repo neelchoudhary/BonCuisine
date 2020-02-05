@@ -78,8 +78,8 @@ func (s *recipeServiceServer) GetRecipeIngredients(ctx context.Context, req *rec
 }
 
 func (s *recipeServiceServer) GetSavedRecipes(ctx context.Context, req *recipe.Empty) (*recipe.GetSavedRecipiesResponse, error) {
-	// Get UserID from metadata
-	userID, err := utils.GetUserID(ctx)
+	// Get UserID from context metadata
+	userID, err := utils.GetUserIDMetadata(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +98,8 @@ func (s *recipeServiceServer) GetSavedRecipes(ctx context.Context, req *recipe.E
 }
 
 func (s *recipeServiceServer) AddSavedRecipe(ctx context.Context, req *recipe.AddSavedRecipeRequest) (*recipe.AddSavedRecipeResponse, error) {
-	// Get UserID from metadata
-	userID, err := utils.GetUserID(ctx)
+	// Get UserID from context metadata
+	userID, err := utils.GetUserIDMetadata(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -115,8 +115,8 @@ func (s *recipeServiceServer) AddSavedRecipe(ctx context.Context, req *recipe.Ad
 }
 
 func (s *recipeServiceServer) RemoveSavedRecipe(ctx context.Context, req *recipe.RemoveSavedRecipeRequest) (*recipe.RemoveSavedRecipeResponse, error) {
-	// Get UserID from metadata
-	userID, err := utils.GetUserID(ctx)
+	// Get UserID from context metadata
+	userID, err := utils.GetUserIDMetadata(ctx)
 	if err != nil {
 		return nil, err
 	}

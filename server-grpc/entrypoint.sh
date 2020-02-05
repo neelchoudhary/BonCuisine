@@ -10,4 +10,4 @@ echo "[`date`] Running entrypoint script in the '${APP_ENV}' environment..."
 
 echo "[`date`] Starting server..."
 
-go run cmd/server.go -env ${APP_ENV}
+go run cmd/server/main.go -env ${APP_ENV}

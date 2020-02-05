@@ -1,7 +1,7 @@
-## Set ENV by running make ENV=local or develop, staging, or production
+## Set ENV by running make ENV=local, develop, staging, production
 ENV := local
-CONFIG_FILE ?= ./config/$(ENV).yml
-DB_URL ?= $(shell sed -n 's/^dburl:[[:space:]]*"\(.*\)"/\1/p' $(CONFIG_FILE))
+# DB URL is always local
+DB_URL := "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
 MIGRATE := migrate -path=db/migrations -database "$(DB_URL)"
 
 .PHONY: default
@@ -11,6 +11,22 @@ default: help
 help: ## help information about make commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: run-server 
+run-server: ## run the grpc server locally
+	./entrypoint.sh
+
+.PHONY: run-auth-client 
+run-auth-client: ## run a local instance of a test client
+	go run cmd/mock_client/client.go -env $(ENV) -c auth
+
+.PHONY: run-recipe-client 
+run-recipe-client: ## run a local instance of a test client
+	go run cmd/mock_client/client.go -env $(ENV) -c recipe
+
+.PHONY: build-docker-server
+build-docker-server: ## use for testing if builds work
+	docker build --build-arg APP_ENV=$(ENV) -t boncuisine-server .
+
 .PHONY: start-db
 start-db: ## start the API server with a dockerized psql server
 	docker run --rm   --name boncuisine-db -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres
@@ -19,22 +35,6 @@ start-db: ## start the API server with a dockerized psql server
 .PHONY: stop-db
 stop-db: ## stop the database
 	docker stop boncuisine-db
-
-.PHONY: run-server 
-run-server: ## run the grpc server locally
-	./entrypoint.sh
-
-.PHONY: run-auth-client 
-run-auth-client: ## run a local instance of a test client
-	go run cmd/auth/client.go
-
-.PHONY: run-recipe-client 
-run-recipe-client: ## run a local instance of a test client
-	go run cmd/recipe/client.go
-
-.PHONY: build-docker-server
-build-docker-server: ## use for testing if builds work
-	docker build --build-arg APP_ENV=develop -t boncuisine-server .
 
 .PHONY: migrate
 migrate: ## run all new database migrations

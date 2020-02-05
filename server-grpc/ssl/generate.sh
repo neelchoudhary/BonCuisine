@@ -14,7 +14,7 @@
 # "Share" files: ca.crt (needed by the client), server.csr (needed by the CA)
 
 # Changes these CN's to match your hosts in your environment if needed.
-SERVER_CN=localhost
+SERVER_CN=#HOST ADDRESS
 
 # Step 1: Generate Certificate Authority + Trust Certificate (ca.crt)
 openssl genrsa -passout pass:1111 -des3 -out ca.key 4096
