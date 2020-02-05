@@ -4,23 +4,17 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/neelchoudhary/boncuisine/db/models"
 	repository "github.com/neelchoudhary/boncuisine/db/repositories"
+	"github.com/neelchoudhary/boncuisine/pkg/utils"
 	user "github.com/neelchoudhary/boncuisine/pkg/v1/user/api"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
-
-type Claims struct {
-	UserID string `json:"user_id"`
-	jwt.StandardClaims
-}
 
 type userServiceServer struct {
 	userRepo *repository.UserRepository
@@ -35,13 +29,13 @@ func (s *userServiceServer) Signup(ctx context.Context, req *user.SignupRequest)
 	// Check if email already exists in db
 	signUpUser := req.GetSignUpUser()
 	if signUpUser.GetFullname() == "" || signUpUser.GetUsername() == "" || signUpUser.GetEmail() == "" || signUpUser.GetPassword() == "" {
-		log.Fatal("All fields required")
+		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("All fields are required"))
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(signUpUser.GetPassword()), 10)
 
 	if err != nil {
-		log.Fatal("Failed to hash password. ", err)
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Failed to hash password: %s", err.Error()))
 	}
 	uniqueID := uuid.NewV4()
 	newUser := user.User{
@@ -79,22 +73,12 @@ func (s *userServiceServer) Login(ctx context.Context, req *user.LoginRequest) (
 			// Error, incorrect password
 			return nil, status.Errorf(codes.PermissionDenied, fmt.Sprintf("Invalid Login Credientials: %s", err.Error()))
 		}
-		// Token expires in 50 minutes
-		expirationTime := time.Now().Add(50 * time.Minute)
-		claims := &Claims{
-			UserID: userToLogIn.ID,
-			StandardClaims: jwt.StandardClaims{
-				// In JWT, the expiry time is expressed as unix milliseconds
-				ExpiresAt: expirationTime.Unix(),
-			},
-		}
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-		// Login and get the encoded token as a string using the secret
-		tokenString, err := token.SignedString([]byte("verySecretSecret"))
+		tokenString, err := utils.CreateToken(userToLogIn.ID)
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, fmt.Sprintf("Failed to sign token: %s", err.Error()))
+			return nil, err
 		}
+
 		res := &user.LoginResponse{
 			Success: true,
 			Token:   tokenString,
