@@ -9,6 +9,5 @@ echo "[`date`] Running entrypoint script in the '${APP_ENV}' environment..."
 #migrate -database "${APP_DSN}" -path ./migrations up
 
 echo "[`date`] Starting server..."
-# go run main.go -env ${APP_ENV}
 
 go run cmd/server.go -env ${APP_ENV}

@@ -93,6 +93,7 @@ func main() {
 	var certFilePath = flag.String("certFilePath", "ssl/server.crt", "TLS cert file path")
 	var keyFilePath = flag.String("keyFilePath", "ssl/server.pem", "TLS key file path")
 	//	var jwtSecret = flag.String("jwtSecret", "", "JWT secret")
+	flag.Parse()
 
 	err := ioutil.WriteFile(*certFilePath, []byte(getTLSKeys(*env, cert)), 0600)
 	if err != nil {
@@ -102,8 +103,6 @@ func main() {
 	if err != nil {
 		fmt.Println("Failed to write server pem file")
 	}
-
-	flag.Parse()
 
 	db := DB{db: driver.ConnectDB(*env)}.db
 	userService := userService.NewUserServiceServer(db)
@@ -116,7 +115,7 @@ func main() {
 
 // RunServer registers gRPC service and run server
 func runServer(ctx context.Context, userServiceServer user.UserServiceServer, recipeServiceServer recipe.RecipeServiceServer, port string, certFilePath string, keyFilePath string) error {
-	listen, err := net.Listen("tcp", "dev.boncuisine-server.com:"+port)
+	listen, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		return err
 	}
