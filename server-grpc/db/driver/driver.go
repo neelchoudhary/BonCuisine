@@ -164,7 +164,7 @@ func LoadSampleData(db *sql.DB) {
 // migrate -database postgres://postgres:password@localhost:5432/postgres?sslmode=disable -path db/migrations down
 func MigrateUp(dbConnection DBConnection) {
 	fmt.Println("Migrating Up...")
-	sourceURL := "file://./db/migrations"
+	sourceURL := "file://db/migrations"
 	// postgres://user:password@host:port/dbname?query
 	localDbURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable",
 		dbConnection.User, dbConnection.Password, dbConnection.Host, dbConnection.DbName)

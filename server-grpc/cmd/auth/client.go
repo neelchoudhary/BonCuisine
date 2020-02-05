@@ -70,15 +70,17 @@ func getTLSKeys(env string, tlsType string) string {
 
 func main() {
 	fmt.Println("Auth Client")
-
+	var env = flag.String("env", "local", "environment type: local, develop, staging, production")
 	var port = flag.String("port", "8080", "server port")
 	var certFilePath = flag.String("certFilePath", "ssl/ca.crt", "TLS ca cert file path")
 	var accessTokenPath = flag.String("accessTokenPath", "cmd/auth/accessToken", "Access token path")
 
+	flag.Parse()
+
 	tls := true
 	opts := grpc.WithInsecure()
 	if tls {
-		err := ioutil.WriteFile(*certFilePath, []byte(getTLSKeys("local", cert)), 0600)
+		err := ioutil.WriteFile(*certFilePath, []byte(getTLSKeys(*env, cert)), 0600)
 		if err != nil {
 			fmt.Println("Failed to write client cert file")
 		}
@@ -92,7 +94,13 @@ func main() {
 		opts = grpc.WithTransportCredentials(creds)
 	}
 
-	conn, err := grpc.Dial("localhost:"+*port, opts)
+	var domain string
+	if *env == "local" {
+		domain = "localhost:"
+	} else if *env == "develop" {
+		domain = "dev.boncuisine-server.com:"
+	}
+	conn, err := grpc.Dial(domain+*port, opts)
 	if err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}

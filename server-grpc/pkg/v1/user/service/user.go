@@ -102,7 +102,7 @@ func (s *userServiceServer) Login(ctx context.Context, req *user.LoginRequest) (
 		return res, nil
 	}
 	// User with the given email does not exist
-	return nil, status.Errorf(codes.PermissionDenied, fmt.Sprintf("Invalid Login Credientials: %s", err.Error()))
+	return nil, status.Errorf(codes.PermissionDenied, fmt.Sprintf("Invalid Login Credientials"))
 }
 
 func signUpPbToData(data user.User) *models.User {
